@@ -40,6 +40,133 @@ int counter_led = 0;
 **===========================================================================
 */
 
+void EXTI0_IRQHandler(void) {
+
+	//TODO: Make some variables global
+	int vehicle_speed;
+	int vehicle_speed_ascendent = 1; //1 = ascendent, 0 = descendent
+	int vehicle_speeds[6] = {0,10,35,45,100,270};
+	int i = 0;
+
+	float wheel_speed_difference_factor[5] = {1, 1.25, 1.35, 1.8, 2.2};
+	int difference_factor_ascendent = 1; //1 = ascendent, 0 = descendent
+	int num_cycles = 0; //Number of times that we have arrived to/started from the initial speed difference factor (1)
+	int calculating_right_speed = 0; //1 = calculating right speed, 0 = calculating left speed
+	float right_wheel_speed;
+	float left_wheel_speed;
+	int j;
+
+	//TODO: Try not use floats for speed? (The project statement says so)
+
+	if(EXTI_GetITStatus(EXTI_Line0) != 0){
+
+		//CASE GPIO AUX LOW
+		if (vehicle_speeds[i] == 0) {
+			vehicle_speed_ascendent = 1;
+		} else if (vehicle_speeds[i] == 270) {
+			vehicle_speed_ascendent = 0;
+		}
+
+		if (vehicle_speed_ascendent == 1) {
+			vehicle_speed = vehicle_speeds[i];
+			i++;
+		} else {
+			vehicle_speed = vehicle_speeds[i];
+			i--;
+			//TODO: Check if i++ and i-- should be before or after. Or maybe just try to see it works, using the debugger
+		}
+		/////////////////////////
+
+		//CASE GPIO AUX HIGH
+		if (vehicle_speed != 0) {
+
+			if (wheel_speed_difference_factor[j] == 1) {
+				difference_factor_ascendent = 1;
+				num_cycles++;
+
+				if (num_cycles == 2) {
+					num_cycles = 1;
+					calculating_right_speed = !calculating_right_speed; //TODO: Check that this turns a 1 into a 0 and viceversa
+				}
+			} else if (wheel_speed_difference_factor[j] == 2.2) {
+				difference_factor_ascendent = 0;
+			}
+
+			if (difference_factor_ascendent == 1) {
+
+				if (calculating_right_speed) {
+					left_wheel_speed = wheel_speed_difference_factor[j];
+					right_wheel_speed = vehicle_speed * left_wheel_speed;
+				} else {
+					right_wheel_speed = wheel_speed_difference_factor[j];
+					left_wheel_speed = vehicle_speed * right_wheel_speed;
+				}
+
+				j++;
+
+			} else {
+
+				if (calculating_right_speed) {
+					left_wheel_speed = wheel_speed_difference_factor[j];
+					right_wheel_speed = vehicle_speed * left_wheel_speed;
+				} else {
+					right_wheel_speed = wheel_speed_difference_factor[j];
+					left_wheel_speed = vehicle_speed * right_wheel_speed;
+				}
+
+				j--;
+				//TODO: Check if j++ and j-- should be before or after. Or maybe just try to see it works, using the debugger
+
+
+			}
+
+		} else {
+			right_wheel_speed = vehicle_speed;
+			left_wheel_speed = vehicle_speed;
+		}
+
+
+		//////////////////
+
+
+		STM_EVAL_LEDToggle(LED4);
+		EXTI_ClearITPendingBit(EXTI_Line0);
+	}
+}
+
+void init_PB_user(void){
+	GPIO_InitTypeDef GPIO_config;
+	EXTI_InitTypeDef EXTI_config;
+	NVIC_InitTypeDef NVIC_config;
+
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
+
+	GPIO_config.GPIO_Mode = GPIO_Mode_IN;
+	GPIO_config.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_config.GPIO_Pin = GPIO_Pin_0;
+	GPIO_Init(GPIOA, &GPIO_config);
+
+	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA, EXTI_PinSource0);
+
+	EXTI_config.EXTI_Line = EXTI_Line0;
+	EXTI_config.EXTI_Mode = EXTI_Mode_Interrupt;
+	EXTI_config.EXTI_Trigger = EXTI_Trigger_Rising;
+	EXTI_config.EXTI_LineCmd = ENABLE;
+	EXTI_Init(&EXTI_config);
+
+	NVIC_config.NVIC_IRQChannel = EXTI0_IRQn;
+	NVIC_config.NVIC_IRQChannelPreemptionPriority = 0x01;
+	NVIC_config.NVIC_IRQChannelSubPriority = 0x01;
+	NVIC_config.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_config);
+}
+
+void init_inputs(void){
+	GPIO_InitTypeDef GPIO_Init;
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
+}
+
 // Executes the TIM2 RSI
 void TIM2_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM2, TIM_IT_Update) != 0) {
@@ -82,13 +209,13 @@ void init_TIM2(void){
 int main(void)
 {
 	init_TIM2();
+	init_PB_user();
 	STM_EVAL_LEDInit(LED3);
+	STM_EVAL_LEDInit(LED4);
 
-	int patata = SystemCoreClock;
-	int a;
+
 	/* Infinite loop */
 	while (1){
-		a = patata;
 	}
 }
 
