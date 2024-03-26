@@ -1,0 +1,7 @@
+LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/arch=x86
+LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/os=win32
+configDescList=org.eclipse.launchbar.core.descriptorType.default\:New_configuration,org.eclipse.launchbar.core.descriptorType.default\:Practica1_Periferics.elf
+eclipse.preferences.version=1
+org.eclipse.launchbar.core.descriptorType.default\:New_configuration/activeLaunchMode=run
+org.eclipse.launchbar.core.descriptorType.default\:Practica1_Periferics.elf/activeLaunchMode=debug
+org.eclipse.launchbar.core.descriptorType.default\:Practica1_Periferics.elf/activeLaunchTarget=org.eclipse.launchbar.core.launchTargetType.local\:Local
