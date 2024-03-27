@@ -54,9 +54,7 @@ float right_wheel_speed = 0;
 float left_wheel_speed = 0;
 int j = 0;
 
-int signal1_microseconds = 0;
-int signal2_microseconds = 0;
-
+int tim5_interrupts = 0;
 
 int right_wheel_signal_period_us;
 int left_wheel_signal_period_us;
@@ -65,19 +63,11 @@ int left_wheel_signal_period_us;
 void TIM5_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM5, TIM_IT_Update) != 0) {
 
-		signal1_microseconds++;
-		signal2_microseconds++;
-
-		if (signal1_microseconds == (right_wheel_signal_period_us / 2)) {
+		tim5_interrupts++;
+		if (tim5_interrupts == (right_wheel_signal_period_us / 2) || tim5_interrupts == right_wheel_signal_period_us) {
 			//TOGGLE PIN PG0
-			signal1_microseconds = 0;
+			tim5_interrupts = 0;
 		}
-
-		if (signal2_microseconds == (left_wheel_signal_period_us / 2)) {
-			//TOGGLE PIN PG1
-			signal2_microseconds = 0;
-		}
-
 		//TIM_SetCounter(TIM5, 0);
 
 		TIM_ClearITPendingBit(TIM5, TIM_IT_Update);
@@ -86,8 +76,6 @@ void TIM5_IRQHandler(void) {
 
 // Inits TIM5 for 1us interrupts
 void init_TIM5(void){
-	//TODOTODOTODO: Find values that make the timer error zero (now is near zero, but not zero)
-
 	TIM_TimeBaseInitTypeDef TIM_TimerConfig;
 	NVIC_InitTypeDef NVIC_TimerConfig;
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM5, ENABLE);
@@ -108,6 +96,11 @@ void init_TIM5(void){
     NVIC_Init(&NVIC_TimerConfig);
 
     TIM_Cmd(TIM5, ENABLE);
+}
+
+void generateRightWheelSignal(int right_wheel_signal_period_us) {
+
+
 }
 
 
