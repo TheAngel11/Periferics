@@ -277,7 +277,7 @@ void TIM2_IRQHandler(void) {
 		counter_led++;
 		if(counter_led >= 2000){
 			counter_led = 0;
-			//STM_EVAL_LEDToggle(LED3);
+			STM_EVAL_LEDToggle(LED3);
 		}
 
 		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
@@ -288,10 +288,6 @@ void TIM2_IRQHandler(void) {
 void TIM3_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM3, TIM_IT_Update) != 0) {
 		num_overflows_right++;
-		if(num_overflows_right % 16 == 0){
-			STM_EVAL_LEDToggle(LED3);
-		}
-
 		TIM_SetCounter(TIM3, 0);
 		TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 	}
@@ -301,11 +297,6 @@ void TIM3_IRQHandler(void) {
 void TIM4_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM4, TIM_IT_Update) != 0) {
 		num_overflows_left++;
-
-		if(num_overflows_left % 16 == 0){
-			STM_EVAL_LEDToggle(LED4);
-		}
-
 		TIM_SetCounter(TIM4, 0);
 		TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
 	}

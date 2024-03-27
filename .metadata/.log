@@ -56,3 +56,17 @@ This warning can be switched off on the Team > Git > Confirmations and Warnings 
 
 !ENTRY org.eclipse.ui 4 4 2024-03-26 20:03:06.306
 !MESSAGE Referenced part does not exist yet: org.eclipse.ui.views.TaskList.
+
+!ENTRY TrueSTUDIO 4 0 2024-03-27 09:41:39.016
+!MESSAGE ST-LINK GDB server failed to start (exit code = 2)
+
+!ENTRY org.eclipse.cdt.dsf.gdb 4 5012 2024-03-27 09:41:39.072
+!MESSAGE Error in initializing ST-Link device.
+Reason: (2) ST-Link DLL error.
+
+!ENTRY TrueSTUDIO 4 0 2024-03-27 09:41:48.306
+!MESSAGE ST-LINK GDB server failed to start (exit code = 2)
+
+!ENTRY org.eclipse.cdt.dsf.gdb 4 5012 2024-03-27 09:41:48.356
+!MESSAGE Error in initializing ST-Link device.
+Reason: (2) ST-Link DLL error.
