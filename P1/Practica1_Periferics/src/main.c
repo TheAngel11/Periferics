@@ -33,8 +33,8 @@ SOFTWARE.
 int counter_led = 0;
 unsigned long num_overflows_right = 0;
 unsigned long num_overflows_left = 0;
-unsigned int right_speed = 0;
-unsigned int left_speed = 0;
+unsigned int Wd = 0; // Right speed
+unsigned int We = 0; // Left speed
 
 /**
 **===========================================================================
@@ -43,7 +43,7 @@ unsigned int left_speed = 0;
 **
 **===========================================================================
 */
-int vehicle_speed = 0;
+int vehicle_speed = 0;	//TODO TODO TODO 0
 int vehicle_speed_ascendent = 1; //1 = ascendent, 0 = descendent
 int i = 0;
 
@@ -65,22 +65,68 @@ int left_wheel_signal_period_us;
 void TIM5_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM5, TIM_IT_Update) != 0) {
 
-		signal1_microseconds++;
-		signal2_microseconds++;
 
-		if (signal1_microseconds == (right_wheel_signal_period_us / 2)) {
+		signal1_microseconds+=50;
+		signal2_microseconds+=50;
+
+		TIM_ClearITPendingBit(TIM5, TIM_IT_Update);
+
+		if (signal1_microseconds >= (right_wheel_signal_period_us / 2)) {
 			GPIO_ToggleBits(GPIOG, GPIO_Pin_0);
 			signal1_microseconds = 0;
 		}
 
-		if (signal2_microseconds == (left_wheel_signal_period_us / 2)) {
+		if (signal2_microseconds >= (left_wheel_signal_period_us / 2)) {
 			GPIO_ToggleBits(GPIOG, GPIO_Pin_1);
 			signal2_microseconds = 0;
 		}
 
 		//TIM_SetCounter(TIM5, 0);
+	}
+}
 
-		TIM_ClearITPendingBit(TIM5, TIM_IT_Update);
+// Function that calculates the Vc signal from We and Wd
+void _calculate_final_signal(void){
+	unsigned int minW;
+	unsigned int maxW;
+	unsigned int Vc;
+
+	if (Wd > We) {
+		minW = We;
+		maxW = Wd;
+	} else {
+		minW = Wd;
+		maxW = We;
+	}
+
+	// Middle point of the signal
+	if (minW <= 1111/2 || minW * 1.3 >= maxW){
+		DAC_SetChannel1Data(DAC_Align_12b_R, 2048);
+		return;
+	}
+
+	// Right side of the signal
+	if ((maxW - minW)/minW >= 1 && maxW == We){
+		DAC_SetChannel1Data(DAC_Align_12b_R, 0);
+		return;
+	}
+
+	// Left side of the signal
+	if ((maxW - minW)/minW >= 1 && maxW == Wd){
+		DAC_SetChannel1Data(DAC_Align_12b_R, 4095);
+		return;
+	}
+
+	// Middle - Right side of the signal: Y = 2925X + 1170
+	if(maxW == Wd) {
+		DAC_SetChannel1Data(DAC_Align_12b_R, 2925 * ((Wd - We)/We) + 1170);
+		return;
+	}
+
+	// Middle - Left side of the signal: Y = -2925X + 2925
+	if(maxW == We) {
+		DAC_SetChannel1Data(DAC_Align_12b_R, -2925 * ((Wd - We)/Wd) + 2925);
+		return;
 	}
 }
 
@@ -93,6 +139,7 @@ void init_wheel_signal_ouput(void) {
 	GPIO_config.GPIO_OType = GPIO_OType_PP;
 	GPIO_config.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_config.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;
+	GPIO_config.GPIO_Speed = GPIO_Speed_100MHz;
 	GPIO_Init(GPIOG, &GPIO_config);
 }
 
@@ -104,9 +151,9 @@ void init_TIM5(void){
 	NVIC_InitTypeDef NVIC_TimerConfig;
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM5, ENABLE);
 
-	TIM_TimerConfig.TIM_Prescaler = 5;
+	TIM_TimerConfig.TIM_Prescaler = 41;
 	TIM_TimerConfig.TIM_CounterMode = TIM_CounterMode_Up;
-	TIM_TimerConfig.TIM_Period = 14;
+	TIM_TimerConfig.TIM_Period = 106;
 	TIM_TimerConfig.TIM_ClockDivision = TIM_CKD_DIV1;
     TIM_TimeBaseInit(TIM5, &TIM_TimerConfig);
 
@@ -115,7 +162,7 @@ void init_TIM5(void){
     NVIC_TimerConfig.NVIC_IRQChannel = TIM5_IRQn;
     NVIC_TimerConfig.NVIC_IRQChannelCmd = ENABLE;
     // TODO: Check priorities
-    NVIC_TimerConfig.NVIC_IRQChannelPreemptionPriority = 0x08;
+    NVIC_TimerConfig.NVIC_IRQChannelPreemptionPriority = 0x01;
     NVIC_TimerConfig.NVIC_IRQChannelSubPriority = 0x01;
     NVIC_Init(&NVIC_TimerConfig);
 
@@ -305,7 +352,7 @@ void init_wheels_inputs(void){
 
 }
 
-// Inits TIM3 and TIM4 for 1us free-running counters that interrupts when overflowing
+// Inits TIM3 and TIM4 for free-running counters that interrupts every 65535us
 void init_TIM3_TIM4(void){
 	TIM_TimeBaseInitTypeDef TIM_TimerConfig;
 	NVIC_InitTypeDef NVIC_TimerConfig;
@@ -392,6 +439,9 @@ void TIM2_IRQHandler(void) {
 			STM_EVAL_LEDToggle(LED3);
 		}
 
+		// Update the output signal
+		_calculate_final_signal();
+
 		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
 	}
 }
@@ -421,7 +471,7 @@ unsigned int _calculate_rotation_speed(unsigned int timer_count, unsigned long o
 void EXTI15_10_IRQHandler(void) {
     if (EXTI_GetITStatus(EXTI_Line13) != 0) {
 
-    	right_speed = _calculate_rotation_speed(TIM_GetCounter(TIM3), num_overflows_right);
+    	Wd = _calculate_rotation_speed(TIM_GetCounter(TIM3), num_overflows_right);
 
     	TIM_SetCounter(TIM3, 0);
     	num_overflows_right = 0;
@@ -431,7 +481,7 @@ void EXTI15_10_IRQHandler(void) {
     }
     if (EXTI_GetITStatus(EXTI_Line14) != 0) {
 
-    	left_speed = _calculate_rotation_speed(TIM_GetCounter(TIM4), num_overflows_left);
+    	We = _calculate_rotation_speed(TIM_GetCounter(TIM4), num_overflows_left);
 
     	TIM_SetCounter(TIM4, 0);
     	num_overflows_left = 0;
