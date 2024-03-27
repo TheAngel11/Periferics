@@ -178,7 +178,6 @@ void init_wheels_inputs(void){
 	GPIO_Init(GPIOC, &GPIO_config);
 
     SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOC, EXTI_PinSource13);
-    SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOC, EXTI_PinSource14);
 
 	EXTI_config.EXTI_Line = EXTI_Line13;
 	EXTI_config.EXTI_Mode = EXTI_Mode_Interrupt;

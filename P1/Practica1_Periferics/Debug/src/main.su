@@ -1,7 +1,8 @@
 main.c:43:6:EXTI0_IRQHandler	96	static
 main.c:137:6:init_PB_user	32	static
-main.c:165:6:init_inputs	16	static
-main.c:171:6:TIM2_IRQHandler	8	static
-main.c:186:6:init_TIM2	24	static
-main.c:209:5:main	8	static
-main.c:226:10:sEE_TIMEOUT_UserCallback	4	static
+main.c:166:6:init_wheels_inputs	32	static
+main.c:200:6:TIM2_IRQHandler	8	static
+main.c:213:6:EXTI15_10_IRQHandler	8	static
+main.c:226:6:init_TIM2	24	static
+main.c:249:5:main	8	static
+main.c:267:10:sEE_TIMEOUT_UserCallback	4	static
