@@ -69,12 +69,12 @@ void TIM5_IRQHandler(void) {
 		signal2_microseconds++;
 
 		if (signal1_microseconds == (right_wheel_signal_period_us / 2)) {
-			GPIO_ToggleBits(GPIOG, GPIO_Pin_0);
+			//TOGGLE PIN PG0
 			signal1_microseconds = 0;
 		}
 
 		if (signal2_microseconds == (left_wheel_signal_period_us / 2)) {
-			GPIO_ToggleBits(GPIOG, GPIO_Pin_1);
+			//TOGGLE PIN PG1
 			signal2_microseconds = 0;
 		}
 
@@ -82,18 +82,6 @@ void TIM5_IRQHandler(void) {
 
 		TIM_ClearITPendingBit(TIM5, TIM_IT_Update);
 	}
-}
-
-void init_wheel_signal_ouput(void) {
-	GPIO_InitTypeDef GPIO_config;
-
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOG, ENABLE);
-
-	GPIO_config.GPIO_Mode = GPIO_Mode_OUT;
-	GPIO_config.GPIO_OType = GPIO_OType_PP;
-	GPIO_config.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	GPIO_config.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;
-	GPIO_Init(GPIOG, &GPIO_config);
 }
 
 // Inits TIM5 for 1us interrupts
@@ -240,7 +228,7 @@ void init_PB_user(void){
 	NVIC_InitTypeDef NVIC_config;
 
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);	//TODO: Check if yes or no
+	//RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);	//TODO: Check if yes or no
 
 	GPIO_config.GPIO_Mode = GPIO_Mode_IN;
 	GPIO_config.GPIO_PuPd = GPIO_PuPd_NOPULL;
@@ -360,28 +348,6 @@ void init_TIM2(void){
     TIM_Cmd(TIM2, ENABLE);
 }
 
-void init_DAC(void){
-	DAC_InitTypeDef DAC_config;
-	GPIO_InitTypeDef GPIO_config;
-
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_DAC, ENABLE);
-	//RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
-
-	GPIO_config.GPIO_Pin = GPIO_Pin_4;
-	GPIO_config.GPIO_Mode = GPIO_Mode_AN;
-	GPIO_config.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	GPIO_Init(GPIOA, &GPIO_config);
-
-	//DAC_DeInit();
-	DAC_config.DAC_Trigger = DAC_Trigger_None;
-	DAC_config.DAC_WaveGeneration = DAC_WaveGeneration_None;
-	DAC_config.DAC_OutputBuffer = DAC_OutputBuffer_Enable;
-	DAC_Init(DAC_Channel_1, &DAC_config);
-
-	DAC_Cmd(DAC_Channel_1, ENABLE);
-	DAC_SetChannel1Data(DAC_Align_12b_R, 0);
-}
-
 // Executes the TIM2 RSI
 void TIM2_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM2, TIM_IT_Update) != 0) {
@@ -415,7 +381,7 @@ void TIM4_IRQHandler(void) {
 }
 
 unsigned int _calculate_rotation_speed(unsigned int timer_count, unsigned long overflow_count){
-	return 100000000/(32 * (timer_count +  65535 * overflow_count));
+	return 10*10*10*10*10*10*10*10/(32 * (timer_count +  65535 * overflow_count));
 }
 
 void EXTI15_10_IRQHandler(void) {
@@ -447,9 +413,7 @@ int main(void)
 	init_TIM3_TIM4();
 	init_TIM5();
 	init_wheels_inputs();
-	init_wheel_signal_ouput();
 	init_PB_user();
-	init_DAC();
 	STM_EVAL_LEDInit(LED3);
 	STM_EVAL_LEDInit(LED4);
 
