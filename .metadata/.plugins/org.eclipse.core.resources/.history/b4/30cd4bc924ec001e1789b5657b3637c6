@@ -43,7 +43,7 @@ unsigned int left_speed = 0;
 **
 **===========================================================================
 */
-int vehicle_speed = 0;
+int vehicle_speed = 10; //TODOOOOOOOOOOOOOOOO: Change to 0
 int vehicle_speed_ascendent = 1; //1 = ascendent, 0 = descendent
 int i = 0;
 

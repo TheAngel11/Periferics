@@ -2652,7 +2652,7 @@ LOAD c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../l
                 [!provide]                PROVIDE (__fini_array_end, .)
                 0x08001548                _sidata = LOADADDR (.data)
 
-.data           0x20000000       0x18 load address 0x08001548
+.data           0x20000000       0x14 load address 0x08001548
                 0x20000000                . = ALIGN (0x4)
                 0x20000000                _sdata = .
  *(.data)
@@ -2663,23 +2663,20 @@ LOAD c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../l
  .data.sEETimeout
                 0x20000008        0x4 Utilities\STM32F429I-Discovery\stm32f429i_discovery_i2c_ee.o
                 0x20000008                sEETimeout
- .data.vehicle_speed
-                0x2000000c        0x4 src\main.o
-                0x2000000c                vehicle_speed
  .data.vehicle_speed_ascendent
-                0x20000010        0x4 src\main.o
-                0x20000010                vehicle_speed_ascendent
+                0x2000000c        0x4 src\main.o
+                0x2000000c                vehicle_speed_ascendent
  .data.difference_factor_ascendent
-                0x20000014        0x4 src\main.o
-                0x20000014                difference_factor_ascendent
-                0x20000018                . = ALIGN (0x4)
-                0x20000018                _edata = .
-                0x08001560                _siccmram = LOADADDR (.ccmram)
+                0x20000010        0x4 src\main.o
+                0x20000010                difference_factor_ascendent
+                0x20000014                . = ALIGN (0x4)
+                0x20000014                _edata = .
+                0x0800155c                _siccmram = LOADADDR (.ccmram)
 
-.igot.plt       0x20000018        0x0 load address 0x08001560
- .igot.plt      0x20000018        0x0 c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/armv7e-m/fpu/crtbegin.o
+.igot.plt       0x20000014        0x0 load address 0x0800155c
+ .igot.plt      0x20000014        0x0 c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/armv7e-m/fpu/crtbegin.o
 
-.ccmram         0x10000000        0x0 load address 0x08001560
+.ccmram         0x10000000        0x0 load address 0x0800155c
                 0x10000000                . = ALIGN (0x4)
                 0x10000000                _sccmram = .
  *(.ccmram)
@@ -2688,27 +2685,30 @@ LOAD c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../l
                 0x10000000                _eccmram = .
                 0x10000000                . = ALIGN (0x4)
 
-.bss            0x20000018       0x54
-                0x20000018                _sbss = .
-                0x20000018                __bss_start__ = _sbss
+.bss            0x20000014       0x58
+                0x20000014                _sbss = .
+                0x20000014                __bss_start__ = _sbss
  *(.bss)
- .bss           0x20000018       0x1c c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/armv7e-m/fpu/crtbegin.o
+ .bss           0x20000014       0x1c c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/armv7e-m/fpu/crtbegin.o
  *(.bss*)
  .bss.counter_led
-                0x20000034        0x4 src\main.o
-                0x20000034                counter_led
+                0x20000030        0x4 src\main.o
+                0x20000030                counter_led
  .bss.num_overflows_right
-                0x20000038        0x4 src\main.o
-                0x20000038                num_overflows_right
+                0x20000034        0x4 src\main.o
+                0x20000034                num_overflows_right
  .bss.num_overflows_left
-                0x2000003c        0x4 src\main.o
-                0x2000003c                num_overflows_left
+                0x20000038        0x4 src\main.o
+                0x20000038                num_overflows_left
  .bss.right_speed
-                0x20000040        0x4 src\main.o
-                0x20000040                right_speed
+                0x2000003c        0x4 src\main.o
+                0x2000003c                right_speed
  .bss.left_speed
+                0x20000040        0x4 src\main.o
+                0x20000040                left_speed
+ .bss.vehicle_speed
                 0x20000044        0x4 src\main.o
-                0x20000044                left_speed
+                0x20000044                vehicle_speed
  .bss.i         0x20000048        0x4 src\main.o
                 0x20000048                i
  .bss.num_cycles

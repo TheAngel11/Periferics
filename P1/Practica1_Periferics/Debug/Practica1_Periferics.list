@@ -13,33 +13,33 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, ALLOC, LOAD, DATA
   4 .fini_array   00000004  08001544  08001544  00011544  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  5 .data         00000018  20000000  08001548  00020000  2**2
+  5 .data         00000014  20000000  08001548  00020000  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  6 .ccmram       00000000  10000000  10000000  00020018  2**0
+  6 .ccmram       00000000  10000000  10000000  00020014  2**0
                   CONTENTS
-  7 .bss          00000054  20000018  20000018  00020018  2**2
+  7 .bss          00000058  20000014  20000014  00020014  2**2
                   ALLOC
-  8 ._user_heap_stack 00000400  2000006c  2000006c  00020018  2**0
+  8 ._user_heap_stack 00000400  2000006c  2000006c  00020014  2**0
                   ALLOC
-  9 .ARM.attributes 00000030  00000000  00000000  00020018  2**0
+  9 .ARM.attributes 00000030  00000000  00000000  00020014  2**0
                   CONTENTS, READONLY
- 10 .debug_info   000072d0  00000000  00000000  00020048  2**0
+ 10 .debug_info   000072d0  00000000  00000000  00020044  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_abbrev 000013fc  00000000  00000000  00027318  2**0
+ 11 .debug_abbrev 000013fc  00000000  00000000  00027314  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_aranges 000009e8  00000000  00000000  00028718  2**3
+ 12 .debug_aranges 000009e8  00000000  00000000  00028710  2**3
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_ranges 00000910  00000000  00000000  00029100  2**3
+ 13 .debug_ranges 00000910  00000000  00000000  000290f8  2**3
                   CONTENTS, READONLY, DEBUGGING
- 14 .debug_line   0000355c  00000000  00000000  00029a10  2**0
+ 14 .debug_line   0000355c  00000000  00000000  00029a08  2**0
                   CONTENTS, READONLY, DEBUGGING
- 15 .debug_str    00003180  00000000  00000000  0002cf6c  2**0
+ 15 .debug_str    00003180  00000000  00000000  0002cf64  2**0
                   CONTENTS, READONLY, DEBUGGING
- 16 .comment      0000007c  00000000  00000000  000300ec  2**0
+ 16 .comment      0000007c  00000000  00000000  000300e4  2**0
                   CONTENTS, READONLY
- 17 .debug_frame  00002a38  00000000  00000000  00030168  2**2
+ 17 .debug_frame  00002a38  00000000  00000000  00030160  2**2
                   CONTENTS, READONLY, DEBUGGING
- 18 .stabstr      0000003f  00000000  00000000  00032ba0  2**0
+ 18 .stabstr      0000003f  00000000  00000000  00032b98  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -56,7 +56,7 @@ Disassembly of section .text:
  80001be:	2301      	movs	r3, #1
  80001c0:	7023      	strb	r3, [r4, #0]
  80001c2:	bd10      	pop	{r4, pc}
- 80001c4:	20000018 	.word	0x20000018
+ 80001c4:	20000014 	.word	0x20000014
  80001c8:	00000000 	.word	0x00000000
  80001cc:	080014f0 	.word	0x080014f0
 
@@ -69,7 +69,7 @@ Disassembly of section .text:
  80001da:	f3af 8000 	nop.w
  80001de:	bd08      	pop	{r3, pc}
  80001e0:	00000000 	.word	0x00000000
- 80001e4:	2000001c 	.word	0x2000001c
+ 80001e4:	20000018 	.word	0x20000018
  80001e8:	080014f0 	.word	0x080014f0
 
 080001ec <NVIC_Init>:
@@ -2333,10 +2333,10 @@ void EXTI0_IRQHandler(void) {
  8000e84:	08001520 	.word	0x08001520
  8000e88:	40020800 	.word	0x40020800
  8000e8c:	20000048 	.word	0x20000048
- 8000e90:	20000010 	.word	0x20000010
- 8000e94:	2000000c 	.word	0x2000000c
+ 8000e90:	2000000c 	.word	0x2000000c
+ 8000e94:	20000044 	.word	0x20000044
  8000e98:	2000005c 	.word	0x2000005c
- 8000e9c:	20000014 	.word	0x20000014
+ 8000e9c:	20000010 	.word	0x20000010
  8000ea0:	2000004c 	.word	0x2000004c
  8000ea4:	20000050 	.word	0x20000050
  8000ea8:	400ccccd 	.word	0x400ccccd
@@ -2744,7 +2744,7 @@ void TIM2_IRQHandler(void) {
  800111a:	bf00      	nop
  800111c:	bd80      	pop	{r7, pc}
  800111e:	bf00      	nop
- 8001120:	20000034 	.word	0x20000034
+ 8001120:	20000030 	.word	0x20000030
 
 08001124 <TIM3_IRQHandler>:
 
@@ -2778,7 +2778,7 @@ void TIM3_IRQHandler(void) {
  8001150:	bf00      	nop
  8001152:	bd80      	pop	{r7, pc}
  8001154:	40000400 	.word	0x40000400
- 8001158:	20000038 	.word	0x20000038
+ 8001158:	20000034 	.word	0x20000034
 
 0800115c <TIM4_IRQHandler>:
 
@@ -2812,7 +2812,7 @@ void TIM4_IRQHandler(void) {
  8001188:	bf00      	nop
  800118a:	bd80      	pop	{r7, pc}
  800118c:	40000800 	.word	0x40000800
- 8001190:	2000003c 	.word	0x2000003c
+ 8001190:	20000038 	.word	0x20000038
 
 08001194 <_calculate_rotation_speed>:
 
@@ -2922,11 +2922,11 @@ void EXTI15_10_IRQHandler(void) {
  8001250:	bf00      	nop
  8001252:	bd80      	pop	{r7, pc}
  8001254:	40000400 	.word	0x40000400
- 8001258:	20000038 	.word	0x20000038
- 800125c:	20000040 	.word	0x20000040
+ 8001258:	20000034 	.word	0x20000034
+ 800125c:	2000003c 	.word	0x2000003c
  8001260:	40000800 	.word	0x40000800
- 8001264:	2000003c 	.word	0x2000003c
- 8001268:	20000044 	.word	0x20000044
+ 8001264:	20000038 	.word	0x20000038
+ 8001268:	20000040 	.word	0x20000040
 
 0800126c <main>:
 
@@ -3048,9 +3048,9 @@ LoopFillZerobss:
   ldr  r0, =_sdata
  80012d4:	20000000 	.word	0x20000000
   ldr  r3, =_edata
- 80012d8:	20000018 	.word	0x20000018
+ 80012d8:	20000014 	.word	0x20000014
   ldr  r2, =_sbss
- 80012dc:	20000018 	.word	0x20000018
+ 80012dc:	20000014 	.word	0x20000014
   ldr  r3, = _ebss
  80012e0:	2000006c 	.word	0x2000006c
 
