@@ -108,8 +108,8 @@ void EXTI0_IRQHandler(void) {
 						right_wheel_speed = vehicle_speed;
 						left_wheel_speed = wheel_speed_difference_factor[j] * right_wheel_speed;
 					}
-					//left = left_wheel_speed;
-					//right = right_wheel_speed;
+					left = left_wheel_speed;
+					right = right_wheel_speed;
 					j++;
 
 				} else {
@@ -122,15 +122,15 @@ void EXTI0_IRQHandler(void) {
 						left_wheel_speed = wheel_speed_difference_factor[j] * right_wheel_speed;
 					}
 
-					//left = left_wheel_speed;
-					//right = right_wheel_speed;
+					left = left_wheel_speed;
+					right = right_wheel_speed;
 					j--;
 
 				}
 
 			} else {
-				//left = vehicle_speed;
-				//right = vehicle_speed;
+				left = vehicle_speed;
+				right = vehicle_speed;
 
 				right_wheel_speed = vehicle_speed;
 				left_wheel_speed = vehicle_speed;

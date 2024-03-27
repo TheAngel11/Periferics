@@ -43,28 +43,31 @@ unsigned int left_speed = 0;
 **
 **===========================================================================
 */
-int vehicle_speed = 10; //TODOOOOOOOOOOOOOOOO: Change to 0
-int vehicle_speed_ascendent = 1; //1 = ascendent, 0 = descendent
-int i = 0;
-
-int difference_factor_ascendent = 1; //1 = ascendent, 0 = descendent
-int num_cycles = 0; //Number of times that we have arrived to/started from the initial speed difference factor (1)
-int calculating_right_speed = 0; //1 = calculating right speed, 0 = calculating left speed
-float right_wheel_speed = 0;
-float left_wheel_speed = 0;
-int j = 0;
 
 void EXTI0_IRQHandler(void) {
-	//float left;
-	//float right;
+
+	//TODO: Make some variables global
+	//TODO: Maybe put i++, i-- and j++, j-- before, and initialize the speed variables to the first element in the corresponding array
+	int vehicle_speed;
+	int vehicle_speed_ascendent = 1; //1 = ascendent, 0 = descendent
 	int vehicle_speeds[6] = {0,10,35,45,100,270};
+	int i = 0;
 
 	float wheel_speed_difference_factor[5] = {1, 1.25, 1.35, 1.8, 2.2};
+	int difference_factor_ascendent = 1; //1 = ascendent, 0 = descendent
+	int num_cycles = 0; //Number of times that we have arrived to/started from the initial speed difference factor (1)
+	int calculating_right_speed = 0; //1 = calculating right speed, 0 = calculating left speed
+	float right_wheel_speed;
+	float left_wheel_speed;
+	int j;
+
+	//TODO: Try not use floats for speed? (The project statement says so)
 
 	if(EXTI_GetITStatus(EXTI_Line0) != 0) {
 
 		if (GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_15) == 0) {
 
+			STM_EVAL_LEDOn(LED4);
 			//CASE GPIO AUX C15 LOW
 			if (vehicle_speeds[i] == 0) {
 				vehicle_speed_ascendent = 1;
@@ -78,6 +81,7 @@ void EXTI0_IRQHandler(void) {
 			} else {
 				vehicle_speed = vehicle_speeds[i];
 				i--;
+				//TODO: Check if i++ and i-- should be before or after. Or maybe just try to see it works, using the debugger
 			}
 			/////////////////////////
 
@@ -93,45 +97,40 @@ void EXTI0_IRQHandler(void) {
 
 					if (num_cycles == 2) {
 						num_cycles = 1;
-						calculating_right_speed = !calculating_right_speed;
+						calculating_right_speed = !calculating_right_speed; //TODO: Check that this turns a 1 into a 0 and viceversa
 					}
-				} else if (wheel_speed_difference_factor[j] == (float) 2.2) {
+				} else if (wheel_speed_difference_factor[j] == 2.2) {
 					difference_factor_ascendent = 0;
 				}
 
 				if (difference_factor_ascendent == 1) {
 
 					if (calculating_right_speed) {
-						left_wheel_speed = vehicle_speed;
-						right_wheel_speed = wheel_speed_difference_factor[j] * left_wheel_speed;
+						left_wheel_speed = wheel_speed_difference_factor[j];
+						right_wheel_speed = vehicle_speed * left_wheel_speed;
 					} else {
-						right_wheel_speed = vehicle_speed;
-						left_wheel_speed = wheel_speed_difference_factor[j] * right_wheel_speed;
+						right_wheel_speed = wheel_speed_difference_factor[j];
+						left_wheel_speed = vehicle_speed * right_wheel_speed;
 					}
-					//left = left_wheel_speed;
-					//right = right_wheel_speed;
+
 					j++;
 
 				} else {
 
 					if (calculating_right_speed) {
-						left_wheel_speed = vehicle_speed;
-						right_wheel_speed = wheel_speed_difference_factor[j] * left_wheel_speed;
+						left_wheel_speed = wheel_speed_difference_factor[j];
+						right_wheel_speed = vehicle_speed * left_wheel_speed;
 					} else {
-						right_wheel_speed = vehicle_speed;
-						left_wheel_speed = wheel_speed_difference_factor[j] * right_wheel_speed;
+						right_wheel_speed = wheel_speed_difference_factor[j];
+						left_wheel_speed = vehicle_speed * right_wheel_speed;
 					}
 
-					//left = left_wheel_speed;
-					//right = right_wheel_speed;
 					j--;
+					//TODO: Check if j++ and j-- should be before or after. Or maybe just try to see it works, using the debugger
 
 				}
 
 			} else {
-				//left = vehicle_speed;
-				//right = vehicle_speed;
-
 				right_wheel_speed = vehicle_speed;
 				left_wheel_speed = vehicle_speed;
 			}
@@ -278,7 +277,7 @@ void TIM2_IRQHandler(void) {
 		counter_led++;
 		if(counter_led >= 2000){
 			counter_led = 0;
-			STM_EVAL_LEDToggle(LED3);
+			//STM_EVAL_LEDToggle(LED3);
 		}
 
 		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
@@ -289,6 +288,10 @@ void TIM2_IRQHandler(void) {
 void TIM3_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM3, TIM_IT_Update) != 0) {
 		num_overflows_right++;
+		if(num_overflows_right % 16 == 0){
+			STM_EVAL_LEDToggle(LED3);
+		}
+
 		TIM_SetCounter(TIM3, 0);
 		TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 	}
@@ -298,29 +301,34 @@ void TIM3_IRQHandler(void) {
 void TIM4_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM4, TIM_IT_Update) != 0) {
 		num_overflows_left++;
+
+		if(num_overflows_left % 16 == 0){
+			STM_EVAL_LEDToggle(LED4);
+		}
+
 		TIM_SetCounter(TIM4, 0);
 		TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
 	}
 }
 
 unsigned int _calculate_rotation_speed(unsigned int timer_count, unsigned long overflow_count){
-	return 10*10*10*10*10*10*10*10/(32 * (timer_count +  65535 * overflow_count));
+	return 10*10*10*10*10*10*10*10/(32 * timer_count * overflow_count);
 }
 
 void EXTI15_10_IRQHandler(void) {
     if (EXTI_GetITStatus(EXTI_Line13) != 0) {
 
-    	right_speed = _calculate_rotation_speed(TIM_GetCounter(TIM3), num_overflows_right);
+    	right_speed = _calculate_rotation_speed(TIM_GetCounter(TIM3), num_overflows_right + 1);
 
     	TIM_SetCounter(TIM3, 0);
     	num_overflows_right = 0;
 
-    	STM_EVAL_LEDToggle(LED3); //TODO: Debug
+    	STM_EVAL_LEDToggle(LED4); //TODO: Debug
         EXTI_ClearITPendingBit(EXTI_Line13);
     }
     if (EXTI_GetITStatus(EXTI_Line14) != 0) {
 
-    	left_speed = _calculate_rotation_speed(TIM_GetCounter(TIM4), num_overflows_left);
+    	left_speed = _calculate_rotation_speed(TIM_GetCounter(TIM4), num_overflows_left + 1);
 
     	TIM_SetCounter(TIM4, 0);
     	num_overflows_left = 0;

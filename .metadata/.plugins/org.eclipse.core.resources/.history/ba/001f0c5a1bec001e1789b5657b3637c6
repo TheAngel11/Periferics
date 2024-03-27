@@ -43,7 +43,7 @@ unsigned int left_speed = 0;
 **
 **===========================================================================
 */
-int vehicle_speed = 10; //TODOOOOOOOOOOOOOOOO: Change to 0
+int vehicle_speed = 0;
 int vehicle_speed_ascendent = 1; //1 = ascendent, 0 = descendent
 int i = 0;
 
@@ -55,16 +55,19 @@ float left_wheel_speed = 0;
 int j = 0;
 
 void EXTI0_IRQHandler(void) {
-	//float left;
-	//float right;
+
+	//TODO: Maybe put i++, i-- and j++, j-- before, and initialize the speed variables to the first element in the corresponding array
 	int vehicle_speeds[6] = {0,10,35,45,100,270};
 
 	float wheel_speed_difference_factor[5] = {1, 1.25, 1.35, 1.8, 2.2};
+
+	//TODO: Try not use floats for speed? (The project statement says so)
 
 	if(EXTI_GetITStatus(EXTI_Line0) != 0) {
 
 		if (GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_15) == 0) {
 
+			STM_EVAL_LEDOn(LED4);
 			//CASE GPIO AUX C15 LOW
 			if (vehicle_speeds[i] == 0) {
 				vehicle_speed_ascendent = 1;
@@ -74,10 +77,12 @@ void EXTI0_IRQHandler(void) {
 
 			if (vehicle_speed_ascendent == 1) {
 				vehicle_speed = vehicle_speeds[i];
+				int local = vehicle_speed;
 				i++;
 			} else {
 				vehicle_speed = vehicle_speeds[i];
 				i--;
+				//TODO: Check if i++ and i-- should be before or after. Or maybe just try to see it works, using the debugger
 			}
 			/////////////////////////
 
@@ -93,45 +98,40 @@ void EXTI0_IRQHandler(void) {
 
 					if (num_cycles == 2) {
 						num_cycles = 1;
-						calculating_right_speed = !calculating_right_speed;
+						calculating_right_speed = !calculating_right_speed; //TODO: Check that this turns a 1 into a 0 and viceversa
 					}
-				} else if (wheel_speed_difference_factor[j] == (float) 2.2) {
+				} else if (wheel_speed_difference_factor[j] == 2.2) {
 					difference_factor_ascendent = 0;
 				}
 
 				if (difference_factor_ascendent == 1) {
 
 					if (calculating_right_speed) {
-						left_wheel_speed = vehicle_speed;
-						right_wheel_speed = wheel_speed_difference_factor[j] * left_wheel_speed;
+						left_wheel_speed = wheel_speed_difference_factor[j];
+						right_wheel_speed = vehicle_speed * left_wheel_speed;
 					} else {
-						right_wheel_speed = vehicle_speed;
-						left_wheel_speed = wheel_speed_difference_factor[j] * right_wheel_speed;
+						right_wheel_speed = wheel_speed_difference_factor[j];
+						left_wheel_speed = vehicle_speed * right_wheel_speed;
 					}
-					//left = left_wheel_speed;
-					//right = right_wheel_speed;
+
 					j++;
 
 				} else {
 
 					if (calculating_right_speed) {
-						left_wheel_speed = vehicle_speed;
-						right_wheel_speed = wheel_speed_difference_factor[j] * left_wheel_speed;
+						left_wheel_speed = wheel_speed_difference_factor[j];
+						right_wheel_speed = vehicle_speed * left_wheel_speed;
 					} else {
-						right_wheel_speed = vehicle_speed;
-						left_wheel_speed = wheel_speed_difference_factor[j] * right_wheel_speed;
+						right_wheel_speed = wheel_speed_difference_factor[j];
+						left_wheel_speed = vehicle_speed * right_wheel_speed;
 					}
 
-					//left = left_wheel_speed;
-					//right = right_wheel_speed;
 					j--;
+					//TODO: Check if j++ and j-- should be before or after. Or maybe just try to see it works, using the debugger
 
 				}
 
 			} else {
-				//left = vehicle_speed;
-				//right = vehicle_speed;
-
 				right_wheel_speed = vehicle_speed;
 				left_wheel_speed = vehicle_speed;
 			}
