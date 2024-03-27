@@ -54,21 +54,27 @@ float right_wheel_speed = 0;
 float left_wheel_speed = 0;
 int j = 0;
 
-int tim5_interrupts = 0;
-
-int right_wheel_signal_period_us;
-int left_wheel_signal_period_us;
-
+int countertim5 = 0;
 // Executes the TIM5 RSI
 void TIM5_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM5, TIM_IT_Update) != 0) {
 
-		tim5_interrupts++;
-		if (tim5_interrupts == (right_wheel_signal_period_us / 2) || tim5_interrupts == right_wheel_signal_period_us) {
-			//TOGGLE PIN PG0
-			tim5_interrupts = 0;
+		countertim5++;
+		if(countertim5 >= 2000){
+			STM_EVAL_LEDToggle(LED3);
 		}
-		//TIM_SetCounter(TIM5, 0);
+
+		if(countertim5 >= 4000){
+			STM_EVAL_LEDToggle(LED3);
+		}
+
+		if(countertim5 >= 6000){
+			STM_EVAL_LEDToggle(LED3);
+		}
+
+		if(countertim5 >= 8000){
+			STM_EVAL_LEDToggle(LED3);
+		}
 
 		TIM_ClearITPendingBit(TIM5, TIM_IT_Update);
 	}
@@ -203,10 +209,10 @@ void EXTI0_IRQHandler(void) {
 		float left_wheel_signal_period_seconds = 1 / (32 * left_wheel_speed_rev_per_second);
 
 		//We convert to signal period from s to us
-		right_wheel_signal_period_us = right_wheel_signal_period_seconds * 1000000;
-		left_wheel_signal_period_us = left_wheel_signal_period_seconds * 1000000;
+		int right_wheel_signal_period_us = right_wheel_signal_period_seconds * 1000000;
+		int left_wheel_signal_period_us = left_wheel_signal_period_seconds * 1000000;
 
-		//generateRightWheelSignal(right_wheel_signal_period_us);
+		generateRightWheelSignal(right_wheel_signal_period_us);
 		//TODO: generate left wheel signal
 
 

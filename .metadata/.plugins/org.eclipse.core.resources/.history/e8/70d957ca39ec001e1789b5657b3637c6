@@ -64,8 +64,7 @@ void TIM5_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM5, TIM_IT_Update) != 0) {
 
 		tim5_interrupts++;
-		if (tim5_interrupts == (right_wheel_signal_period_us / 2) || tim5_interrupts == right_wheel_signal_period_us) {
-			//TOGGLE PIN PG0
+		if (tim5_interrupts == right_wheel_half_period) {
 			tim5_interrupts = 0;
 		}
 		//TIM_SetCounter(TIM5, 0);

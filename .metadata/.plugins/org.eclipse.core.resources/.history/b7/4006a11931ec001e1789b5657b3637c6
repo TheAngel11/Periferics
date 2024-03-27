@@ -54,56 +54,6 @@ float right_wheel_speed = 0;
 float left_wheel_speed = 0;
 int j = 0;
 
-int tim5_interrupts = 0;
-
-int right_wheel_signal_period_us;
-int left_wheel_signal_period_us;
-
-// Executes the TIM5 RSI
-void TIM5_IRQHandler(void) {
-	if (TIM_GetITStatus(TIM5, TIM_IT_Update) != 0) {
-
-		tim5_interrupts++;
-		if (tim5_interrupts == (right_wheel_signal_period_us / 2) || tim5_interrupts == right_wheel_signal_period_us) {
-			//TOGGLE PIN PG0
-			tim5_interrupts = 0;
-		}
-		//TIM_SetCounter(TIM5, 0);
-
-		TIM_ClearITPendingBit(TIM5, TIM_IT_Update);
-	}
-}
-
-// Inits TIM5 for 1us interrupts
-void init_TIM5(void){
-	TIM_TimeBaseInitTypeDef TIM_TimerConfig;
-	NVIC_InitTypeDef NVIC_TimerConfig;
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM5, ENABLE);
-
-	TIM_TimerConfig.TIM_Prescaler = 5;
-	TIM_TimerConfig.TIM_CounterMode = TIM_CounterMode_Up;
-	TIM_TimerConfig.TIM_Period = 14;
-	TIM_TimerConfig.TIM_ClockDivision = TIM_CKD_DIV1;
-    TIM_TimeBaseInit(TIM5, &TIM_TimerConfig);
-
-    TIM_ITConfig(TIM5, TIM_IT_Update, ENABLE);
-
-    NVIC_TimerConfig.NVIC_IRQChannel = TIM5_IRQn;
-    NVIC_TimerConfig.NVIC_IRQChannelCmd = ENABLE;
-    // TODO: Check priorities
-    NVIC_TimerConfig.NVIC_IRQChannelPreemptionPriority = 0x08;
-    NVIC_TimerConfig.NVIC_IRQChannelSubPriority = 0x01;
-    NVIC_Init(&NVIC_TimerConfig);
-
-    TIM_Cmd(TIM5, ENABLE);
-}
-
-void generateRightWheelSignal(int right_wheel_signal_period_us) {
-
-
-}
-
-
 //User PB RSI
 void EXTI0_IRQHandler(void) {
 	//float left;
@@ -202,12 +152,6 @@ void EXTI0_IRQHandler(void) {
 		float right_wheel_signal_period_seconds = 1 / (32 * right_wheel_speed_rev_per_second);
 		float left_wheel_signal_period_seconds = 1 / (32 * left_wheel_speed_rev_per_second);
 
-		//We convert to signal period from s to us
-		right_wheel_signal_period_us = right_wheel_signal_period_seconds * 1000000;
-		left_wheel_signal_period_us = left_wheel_signal_period_seconds * 1000000;
-
-		//generateRightWheelSignal(right_wheel_signal_period_us);
-		//TODO: generate left wheel signal
 
 
 		//STM_EVAL_LEDToggle(LED4);
@@ -404,7 +348,6 @@ int main(void)
 {
 	init_TIM2();
 	init_TIM3_TIM4();
-	init_TIM5();
 	init_wheels_inputs();
 	init_PB_user();
 	STM_EVAL_LEDInit(LED3);
