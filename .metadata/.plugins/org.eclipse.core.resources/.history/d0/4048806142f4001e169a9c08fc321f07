@@ -11,7 +11,7 @@ unsigned int We = 0; // Left speed
 uint32_t micros_period_right = 0;
 uint32_t micros_period_left = 0;
 
-int vehicle_speed = 45;//TODO
+int vehicle_speed = 0;
 int vehicle_speed_ascendent = 1; //1 = ascendent, 0 = descendent
 int i = 0;
 
@@ -36,7 +36,8 @@ int last_bouncing_counter_ms = 0;
 // Executes the TIM5 RSI
 void TIM5_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM5, TIM_IT_Update) != 0) {
-		//STM_EVAL_LEDOn(LED4);
+
+
 		signal1_microseconds+=50;
 		signal2_microseconds+=50;
 
@@ -51,8 +52,6 @@ void TIM5_IRQHandler(void) {
 			GPIO_ToggleBits(GPIOG, GPIO_Pin_1);
 			signal2_microseconds = 0;
 		}
-
-		//STM_EVAL_LEDOff(LED4);
 
 		//TIM_SetCounter(TIM5, 0);
 	}
@@ -74,33 +73,33 @@ void _calculate_final_signal(void){
 
 	// Middle point of the signal
 	if (minW <= 1111/2 || minW * 1.3 >= maxW){
-		DAC_SetChannel2Data(DAC_Align_12b_R, 2048);
+		DAC_SetChannel1Data(DAC_Align_12b_R, 2048);
 		return;
 	}
 
 	// Right side of the signal
 	if ((maxW - minW)/minW >= 1 && maxW == We){
-		DAC_SetChannel2Data(DAC_Align_12b_R, 0);
+		DAC_SetChannel1Data(DAC_Align_12b_R, 0);
 		return;
 	}
 
 	// Left side of the signal
 	if ((maxW - minW)/minW >= 1 && maxW == Wd){
-		DAC_SetChannel2Data(DAC_Align_12b_R, 4095);
+		DAC_SetChannel1Data(DAC_Align_12b_R, 4095);
 		return;
 	}
 
 	// Middle - Right side of the signal: Y = 2925X + 1170
 	if(maxW == Wd) {
 		Vc = (int)(2925 * ((float)(Wd - We) / We)) + 1170;
-		DAC_SetChannel2Data(DAC_Align_12b_R, Vc);
+		DAC_SetChannel1Data(DAC_Align_12b_R, Vc);
 		return;
 	}
 
 	// Middle - Left side of the signal: Y = -2925X + 2925
 	if(maxW == We) {
 		Vc = (int)(-2925 * ((float)(We - Wd) / Wd)) + 2925;
-		DAC_SetChannel2Data(DAC_Align_12b_R, Vc);
+		DAC_SetChannel1Data(DAC_Align_12b_R, Vc);
 		return;
 	}
 }
@@ -171,7 +170,6 @@ void EXTI0_IRQHandler(void) {
 	ms_since_edge_rising = 0;*/
 
 	if (bouncing_counter_ms - last_bouncing_counter_ms > MAX_BOUNCES_MS) {
-		//STM_EVAL_LEDOn(LED4);
 		last_bouncing_counter_ms = bouncing_counter_ms;
 		rebounds_counter++;
 
@@ -182,11 +180,11 @@ void EXTI0_IRQHandler(void) {
 			float wheel_speed_difference_factor[5] = {1, 1.25, 1.35, 1.8, 2.2};
 
 			// We disable the timer to reduce the BW when the speed is less than 40Km/h and the difference factor is less than 1.3
-			/*if (i < 2 || j < 3){
+			if (i < 2 && j < 3){
 				TIM_Cmd(TIM3, DISABLE);
 			} else {
 				TIM_Cmd(TIM3, ENABLE);
-			}*/
+			}
 
 			if(EXTI_GetITStatus(EXTI_Line0) != 0) {
 
@@ -286,11 +284,14 @@ void EXTI0_IRQHandler(void) {
 				//TODO: generate left wheel signal
 
 
+				//STM_EVAL_LEDToggle(LED4);
+				EXTI_ClearITPendingBit(EXTI_Line0);
 			}
-		//STM_EVAL_LEDOff(LED4);
+
 	}
 
-	EXTI_ClearITPendingBit(EXTI_Line0);
+
+
 }
 
 void init_PB_user(void){
@@ -453,13 +454,13 @@ void init_TIM2(void){
 }
 
 void init_DAC(void){
-	/*DAC_InitTypeDef DAC_config;
+	DAC_InitTypeDef DAC_config;
 	GPIO_InitTypeDef GPIO_config;
 
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_DAC, ENABLE);
 	//RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
 
-	GPIO_config.GPIO_Pin = GPIO_Pin_5;
+	GPIO_config.GPIO_Pin = GPIO_Pin_4;
 	GPIO_config.GPIO_Mode = GPIO_Mode_AN;
 	GPIO_config.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_Init(GPIOA, &GPIO_config);
@@ -468,34 +469,16 @@ void init_DAC(void){
 	DAC_config.DAC_Trigger = DAC_Trigger_None;
 	DAC_config.DAC_WaveGeneration = DAC_WaveGeneration_None;
 	DAC_config.DAC_OutputBuffer = DAC_OutputBuffer_Enable;
-	DAC_Init(DAC_Channel_2, &DAC_config);
+	DAC_Init(DAC_Channel_1, &DAC_config);
 
-	DAC_Cmd(DAC_Channel_2, ENABLE);
-	DAC_SetChannel2Data(DAC_Align_12b_R, 0);*/
-
-	GPIO_InitTypeDef GPIO_config;
-	DAC_InitTypeDef DAC_config;
-
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_DAC, ENABLE);
-
-	GPIO_config.GPIO_Pin = GPIO_Pin_5;
-	GPIO_config.GPIO_Mode = GPIO_Mode_AN;
-	GPIO_config.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	GPIO_Init(GPIOA, &GPIO_config);
-
-	DAC_config.DAC_Trigger = DAC_Trigger_None;
-	DAC_config.DAC_WaveGeneration = DAC_WaveGeneration_None;
-	DAC_config.DAC_OutputBuffer = DAC_OutputBuffer_Enable;
-	DAC_Init(DAC_Channel_2, &DAC_config);
-
-	DAC_Cmd(DAC_Channel_2, ENABLE);
-	DAC_SetChannel2Data(DAC_Align_12b_R, 2048);
+	DAC_Cmd(DAC_Channel_1, ENABLE);
+	DAC_SetChannel1Data(DAC_Align_12b_R, 0);
 }
 
 // Executes the TIM2 RSI
 void TIM2_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM2, TIM_IT_Update) != 0) {
-		//STM_EVAL_LEDToggle(LED4);
+
 		counter_led++;
 		if(counter_led >= 200){
 			counter_led = 0;
@@ -510,7 +493,6 @@ void TIM2_IRQHandler(void) {
 		bouncing_counter_ms++;
 
 		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
-		//STM_EVAL_LEDOff(LED4);
 	}
 }
 
@@ -519,11 +501,9 @@ int todoododo = 0;
 // Executes the TIM3 RSI
 void TIM3_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM3, TIM_IT_Update) != 0) {
-		//STM_EVAL_LEDOn(LED4);
 		micros_period_right+=2;
 		micros_period_left+=2;
 		TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
-		//STM_EVAL_LEDOff(LED4);
 	}
 }
 
@@ -533,7 +513,7 @@ unsigned int _calculate_rotation_speed(uint32_t us_passed){
 
 void EXTI9_5_IRQHandler(void) {
     if (EXTI_GetITStatus(EXTI_Line9) != 0) {
-    	STM_EVAL_LEDOff(LED4);
+    	//STM_EVAL_LEDOn(LED4);
     	Wd = _calculate_rotation_speed(micros_period_right);
     	micros_period_right = 0;
 
@@ -541,11 +521,11 @@ void EXTI9_5_IRQHandler(void) {
     	//STM_EVAL_LEDOff(LED4);
     }
     if (EXTI_GetITStatus(EXTI_Line8) != 0) {
-    	//STM_EVAL_LEDOn(LED4);
+    	STM_EVAL_LEDOn(LED4);
     	We = _calculate_rotation_speed(micros_period_left);
     	micros_period_left = 0;
         EXTI_ClearITPendingBit(EXTI_Line8);
-        //STM_EVAL_LEDOff(LED4);
+        STM_EVAL_LEDOff(LED4);
     }
 }
 
@@ -560,7 +540,6 @@ int main(void)
 	init_DAC();
 	STM_EVAL_LEDInit(LED3);
 	STM_EVAL_LEDInit(LED4);
-	DAC_SetChannel2Data(DAC_Align_12b_R, 0);
 
 	/* Infinite loop */
 	while (1){
