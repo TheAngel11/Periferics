@@ -497,8 +497,8 @@ void TIM4_IRQHandler(void) {
 	}
 }
 
-unsigned int _calculate_rotation_speed(uint32_t us_passed){
-	return 100000000/(32 * us_passed);
+unsigned int _calculate_rotation_speed(unsigned int timer_count, unsigned long overflow_count){
+	return 100000000/(32 * (timer_count +  65535 * overflow_count));
 }
 
 void EXTI9_5_IRQHandler(void) {

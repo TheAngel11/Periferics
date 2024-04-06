@@ -2,8 +2,8 @@
 #include "stm32f429i_discovery.h"
 
 int counter_led = 0;
-//unsigned long num_overflows_right = 0;
-//unsigned long num_overflows_left = 0;
+unsigned long num_overflows_right = 0;
+unsigned long num_overflows_left = 0;
 unsigned int Wd = 0; // Right speed
 unsigned int We = 0; // Left speed
 uint32_t micros_period_right = 0;
@@ -497,21 +497,34 @@ void TIM4_IRQHandler(void) {
 	}
 }
 
-unsigned int _calculate_rotation_speed(uint32_t us_passed){
-	return 100000000/(32 * us_passed);
+unsigned int _calculate_rotation_speed(unsigned int timer_count, unsigned long overflow_count){
+	return 100000000/(32 * (timer_count +  65535 * overflow_count));
 }
 
 void EXTI9_5_IRQHandler(void) {
     if (EXTI_GetITStatus(EXTI_Line9) != 0) {
 
-    	Wd = _calculate_rotation_speed(micros_period_right);
-    	micros_period_right = 0;
+    	unsigned int todo = TIM_GetCounter(TIM3);
 
+    	Wd = _calculate_rotation_speed(TIM_GetCounter(TIM3), num_overflows_right);
+
+    	TIM_Cmd(TIM3, DISABLE);
+		//TIM_SetCounter(TIM3, 1);
+    	//TIM3->CNT = 0;
+		TIM_Cmd(TIM3, ENABLE);
+		num_overflows_right = 0;
+
+    	//STM_EVAL_LEDToggle(LED3); //TODO: Debug
         EXTI_ClearITPendingBit(EXTI_Line9);
     }
     if (EXTI_GetITStatus(EXTI_Line8) != 0) {
-    	We = _calculate_rotation_speed(micros_period_right);
-    	micros_period_left = 0;
+
+    	unsigned int todo = TIM_GetCounter(TIM4);
+
+    	We = _calculate_rotation_speed(TIM_GetCounter(TIM4), num_overflows_left);
+
+    	//TIM_SetCounter(TIM4, 0);
+    	num_overflows_left = 0;
 
     	//GPIO_ToggleBits(GPIOE, GPIO_Pin_4);
     	//STM_EVAL_LEDToggle(LED4); //TODO: Debug
