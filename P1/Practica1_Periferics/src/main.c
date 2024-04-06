@@ -1,6 +1,8 @@
 #include "stm32f4xx.h"
 #include "stm32f429i_discovery.h"
 
+#define MAX_BOUNCES_MS 300
+
 int counter_led = 0;
 //unsigned long num_overflows_right = 0;
 //unsigned long num_overflows_left = 0;
@@ -9,7 +11,7 @@ unsigned int We = 0; // Left speed
 uint32_t micros_period_right = 0;
 uint32_t micros_period_left = 0;
 
-int vehicle_speed = 35;	//TODO TODO TODO 0
+int vehicle_speed = 45;	//TODO TODO TODO 0
 int vehicle_speed_ascendent = 1; //1 = ascendent, 0 = descendent
 int i = 0;
 
@@ -26,6 +28,10 @@ int signal2_microseconds = 0;
 
 int right_wheel_signal_period_us;
 int left_wheel_signal_period_us;
+
+int ms_since_edge_rising = 0;
+int bouncing_counter_ms = 0;
+int last_bouncing_counter_ms = 0;
 
 // Executes the TIM5 RSI
 void TIM5_IRQHandler(void) {
@@ -55,7 +61,7 @@ void TIM5_IRQHandler(void) {
 void _calculate_final_signal(void){
 	unsigned int minW;
 	unsigned int maxW;
-	unsigned int Vc;
+	int Vc;
 
 	if (Wd > We) {
 		minW = We;
@@ -85,13 +91,15 @@ void _calculate_final_signal(void){
 
 	// Middle - Right side of the signal: Y = 2925X + 1170
 	if(maxW == Wd) {
-		DAC_SetChannel1Data(DAC_Align_12b_R, 2925 * ((Wd - We)/We) + 1170);
+		Vc = (int)(2925 * ((float)(Wd - We) / We)) + 1170;
+		DAC_SetChannel1Data(DAC_Align_12b_R, Vc);
 		return;
 	}
 
 	// Middle - Left side of the signal: Y = -2925X + 2925
 	if(maxW == We) {
-		DAC_SetChannel1Data(DAC_Align_12b_R, -2925 * ((Wd - We)/Wd) + 2925);
+		Vc = (int)(-2925 * ((float)(We - Wd) / Wd)) + 2925;
+		DAC_SetChannel1Data(DAC_Align_12b_R, Vc);
 		return;
 	}
 }
@@ -139,7 +147,7 @@ void init_TIM5(void){
     NVIC_TimerConfig.NVIC_IRQChannel = TIM5_IRQn;
     NVIC_TimerConfig.NVIC_IRQChannelCmd = ENABLE;
     // TODO: Check priorities
-    NVIC_TimerConfig.NVIC_IRQChannelPreemptionPriority = 0x01;
+    NVIC_TimerConfig.NVIC_IRQChannelPreemptionPriority = 0x02;
     NVIC_TimerConfig.NVIC_IRQChannelSubPriority = 0x01;
     NVIC_Init(&NVIC_TimerConfig);
 
@@ -147,115 +155,143 @@ void init_TIM5(void){
 }
 
 
+int rebounds_counter = 0;
+
 //User PB RSI
 void EXTI0_IRQHandler(void) {
 	//float left;
 	//float right;
-	int vehicle_speeds[6] = {0,10,35,45,100,270};
 
-	float wheel_speed_difference_factor[5] = {1, 1.25, 1.35, 1.8, 2.2};
+	/*//If the user does not press the button in a given 10 second period, we automatically reset the counter so that it does not overflow
+	if (ms_since_edge_rising >= 10000) {
+			bouncing_counter_ms = 0;
+	}
 
-	if(EXTI_GetITStatus(EXTI_Line0) != 0) {
+	ms_since_edge_rising = 0;*/
 
-		if (GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_15) == 0) {
+	if (bouncing_counter_ms - last_bouncing_counter_ms > MAX_BOUNCES_MS) {
+		last_bouncing_counter_ms = bouncing_counter_ms;
+		rebounds_counter++;
 
-			//CASE GPIO AUX C15 LOW
-			if (vehicle_speeds[i] == 0) {
-				vehicle_speed_ascendent = 1;
-			} else if (vehicle_speeds[i] == 270) {
-				vehicle_speed_ascendent = 0;
-			}
 
-			if (vehicle_speed_ascendent == 1) {
-				vehicle_speed = vehicle_speeds[i];
-				i++;
+		/////////////////////
+		int vehicle_speeds[6] = {0,10,35,45,100,270};
+
+			float wheel_speed_difference_factor[5] = {1, 1.25, 1.35, 1.8, 2.2};
+
+			// We disable the timer to reduce the BW when the speed is less than 40Km/h and the difference factor is less than 1.3
+			if (i < 2 && j < 3){
+				TIM_Cmd(TIM3, DISABLE);
 			} else {
-				vehicle_speed = vehicle_speeds[i];
-				i--;
+				TIM_Cmd(TIM3, ENABLE);
 			}
-			/////////////////////////
 
-		} else {
+			if(EXTI_GetITStatus(EXTI_Line0) != 0) {
 
-			//STM_EVAL_LEDOff(LED4);
-			//CASE GPIO AUX C15 HIGH
-			if (vehicle_speed != 0) {
+				if (GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_15) == 0) {
 
-				if (wheel_speed_difference_factor[j] == 1) {
-					difference_factor_ascendent = 1;
-					num_cycles++;
-
-					if (num_cycles == 2) {
-						num_cycles = 1;
-						calculating_right_speed = !calculating_right_speed;
+					//CASE GPIO AUX C15 LOW
+					if (vehicle_speeds[i] == 0) {
+						vehicle_speed_ascendent = 1;
+					} else if (vehicle_speeds[i] == 270) {
+						vehicle_speed_ascendent = 0;
 					}
-				} else if (wheel_speed_difference_factor[j] == (float) 2.2) {
-					difference_factor_ascendent = 0;
-				}
 
-				if (difference_factor_ascendent == 1) {
-
-					if (calculating_right_speed) {
-						left_wheel_speed = vehicle_speed;
-						right_wheel_speed = wheel_speed_difference_factor[j] * left_wheel_speed;
+					if (vehicle_speed_ascendent == 1) {
+						vehicle_speed = vehicle_speeds[i];
+						i++;
 					} else {
-						right_wheel_speed = vehicle_speed;
-						left_wheel_speed = wheel_speed_difference_factor[j] * right_wheel_speed;
+						vehicle_speed = vehicle_speeds[i];
+						i--;
 					}
-					//left = left_wheel_speed;
-					//right = right_wheel_speed;
-					j++;
+					/////////////////////////
 
 				} else {
 
-					if (calculating_right_speed) {
-						left_wheel_speed = vehicle_speed;
-						right_wheel_speed = wheel_speed_difference_factor[j] * left_wheel_speed;
+					//STM_EVAL_LEDOff(LED4);
+					//CASE GPIO AUX C15 HIGH
+					if (vehicle_speed != 0) {
+
+						if (wheel_speed_difference_factor[j] == 1) {
+							difference_factor_ascendent = 1;
+							num_cycles++;
+
+							if (num_cycles == 2) {
+								num_cycles = 1;
+								calculating_right_speed = !calculating_right_speed;
+							}
+						} else if (wheel_speed_difference_factor[j] == (float) 2.2) {
+							difference_factor_ascendent = 0;
+						}
+
+						if (difference_factor_ascendent == 1) {
+
+							if (calculating_right_speed) {
+								left_wheel_speed = vehicle_speed;
+								right_wheel_speed = wheel_speed_difference_factor[j] * left_wheel_speed;
+							} else {
+								right_wheel_speed = vehicle_speed;
+								left_wheel_speed = wheel_speed_difference_factor[j] * right_wheel_speed;
+							}
+							//left = left_wheel_speed;
+							//right = right_wheel_speed;
+							j++;
+
+						} else {
+
+							if (calculating_right_speed) {
+								left_wheel_speed = vehicle_speed;
+								right_wheel_speed = wheel_speed_difference_factor[j] * left_wheel_speed;
+							} else {
+								right_wheel_speed = vehicle_speed;
+								left_wheel_speed = wheel_speed_difference_factor[j] * right_wheel_speed;
+							}
+
+							//left = left_wheel_speed;
+							//right = right_wheel_speed;
+							j--;
+
+						}
+
 					} else {
+						//left = vehicle_speed;
+						//right = vehicle_speed;
+
 						right_wheel_speed = vehicle_speed;
-						left_wheel_speed = wheel_speed_difference_factor[j] * right_wheel_speed;
+						left_wheel_speed = vehicle_speed;
 					}
 
-					//left = left_wheel_speed;
-					//right = right_wheel_speed;
-					j--;
-
+					//////////////////
 				}
 
-			} else {
-				//left = vehicle_speed;
-				//right = vehicle_speed;
+				//We convert km/h to m/s
+				float right_wheel_speed_meters_per_second = (right_wheel_speed * 1000) / 3600;
+				float left_wheel_speed_meters_per_second = (left_wheel_speed * 1000) / 3600;
 
-				right_wheel_speed = vehicle_speed;
-				left_wheel_speed = vehicle_speed;
+				//We convert from m/s to rev/s
+				float right_wheel_speed_rev_per_second = right_wheel_speed_meters_per_second / 2;
+				float left_wheel_speed_rev_per_second = left_wheel_speed_meters_per_second / 2;
+
+				//We convert rev/s to signal period
+				float right_wheel_signal_period_seconds = 1 / (32 * right_wheel_speed_rev_per_second);
+				float left_wheel_signal_period_seconds = 1 / (32 * left_wheel_speed_rev_per_second);
+
+				//We convert to signal period from s to us
+				right_wheel_signal_period_us = right_wheel_signal_period_seconds * 1000000;
+				left_wheel_signal_period_us = left_wheel_signal_period_seconds * 1000000;
+
+				//generateRightWheelSignal(right_wheel_signal_period_us);
+				//TODO: generate left wheel signal
+
+
+				//STM_EVAL_LEDToggle(LED4);
+				EXTI_ClearITPendingBit(EXTI_Line0);
 			}
 
-			//////////////////
-		}
-
-		//We convert km/h to m/s
-		float right_wheel_speed_meters_per_second = (right_wheel_speed * 1000) / 3600;
-		float left_wheel_speed_meters_per_second = (left_wheel_speed * 1000) / 3600;
-
-		//We convert from m/s to rev/s
-		float right_wheel_speed_rev_per_second = right_wheel_speed_meters_per_second / 2;
-		float left_wheel_speed_rev_per_second = left_wheel_speed_meters_per_second / 2;
-
-		//We convert rev/s to signal period
-		float right_wheel_signal_period_seconds = 1 / (32 * right_wheel_speed_rev_per_second);
-		float left_wheel_signal_period_seconds = 1 / (32 * left_wheel_speed_rev_per_second);
-
-		//We convert to signal period from s to us
-		right_wheel_signal_period_us = right_wheel_signal_period_seconds * 1000000;
-		left_wheel_signal_period_us = left_wheel_signal_period_seconds * 1000000;
-
-		//generateRightWheelSignal(right_wheel_signal_period_us);
-		//TODO: generate left wheel signal
-
-
-		//STM_EVAL_LEDToggle(LED4);
-		EXTI_ClearITPendingBit(EXTI_Line0);
 	}
+
+
+
 }
 
 void init_PB_user(void){
@@ -289,7 +325,7 @@ void init_PB_user(void){
 	EXTI_Init(&EXTI_config);
 
 	NVIC_config.NVIC_IRQChannel = EXTI0_IRQn;
-	NVIC_config.NVIC_IRQChannelPreemptionPriority = 0x07;
+	NVIC_config.NVIC_IRQChannelPreemptionPriority = 0x04;
 	NVIC_config.NVIC_IRQChannelSubPriority = 0x01;
 	NVIC_config.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_config);
@@ -323,7 +359,7 @@ void init_wheels_inputs(void){
 	EXTI_Init(&EXTI_config);
 
 	NVIC_config.NVIC_IRQChannel = EXTI9_5_IRQn;
-	NVIC_config.NVIC_IRQChannelPreemptionPriority = 0x02;
+	NVIC_config.NVIC_IRQChannelPreemptionPriority = 0x03;
 	NVIC_config.NVIC_IRQChannelSubPriority = 0x01;
 	NVIC_config.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_config);
@@ -331,38 +367,38 @@ void init_wheels_inputs(void){
 }
 
 //Interrupt every 1us
-void init_TIM3_TIM4(void){
+void init_TIM3(void){
 	TIM_TimeBaseInitTypeDef TIM_TimerConfig;
 	NVIC_InitTypeDef NVIC_TimerConfig;
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
+	//RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
 
 	//TIM_TimeBaseStructInit(&TIM_TimerConfig);	//TODO: Check if yes or no
 	// Inits TIM3 and TIM4 for free-running counters that interrupts every 65535us
 	/*TIM_TimerConfig.TIM_Prescaler = 94;	// Now we get 1 Tic every 1us
 	TIM_TimerConfig.TIM_CounterMode = TIM_CounterMode_Up;
 	TIM_TimerConfig.TIM_Period = 0xFFFFFFFF;*/
-	TIM_TimerConfig.TIM_Prescaler = 41;
+	TIM_TimerConfig.TIM_Prescaler = 1;
 	TIM_TimerConfig.TIM_CounterMode = TIM_CounterMode_Up;
-	TIM_TimerConfig.TIM_Period = 106;
+	TIM_TimerConfig.TIM_Period = 90;
 	TIM_TimerConfig.TIM_ClockDivision = TIM_CKD_DIV1;
     TIM_TimeBaseInit(TIM3, &TIM_TimerConfig);
-    TIM_TimeBaseInit(TIM4, &TIM_TimerConfig);
+    //TIM_TimeBaseInit(TIM4, &TIM_TimerConfig);
 
     TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
-    TIM_ITConfig(TIM4, TIM_IT_Update, ENABLE);
+    //TIM_ITConfig(TIM4, TIM_IT_Update, ENABLE);
 
     NVIC_TimerConfig.NVIC_IRQChannel = TIM3_IRQn;
     NVIC_TimerConfig.NVIC_IRQChannelCmd = ENABLE;
     // TODO: Check priorities
-    NVIC_TimerConfig.NVIC_IRQChannelPreemptionPriority = 0x04;
+    NVIC_TimerConfig.NVIC_IRQChannelPreemptionPriority = 0x01;
     NVIC_TimerConfig.NVIC_IRQChannelSubPriority = 0x01;
     NVIC_Init(&NVIC_TimerConfig);
-    NVIC_TimerConfig.NVIC_IRQChannel = TIM4_IRQn;
-    NVIC_Init(&NVIC_TimerConfig);
+    //NVIC_TimerConfig.NVIC_IRQChannel = TIM4_IRQn;
+    //NVIC_Init(&NVIC_TimerConfig);
 
     TIM_Cmd(TIM3, ENABLE);
-    TIM_Cmd(TIM4, ENABLE);
+    //TIM_Cmd(TIM4, ENABLE);
 
 	/*TIM_TimeBaseInitTypeDef TIM_TimerConfig;
 	NVIC_InitTypeDef NVIC_TimerConfig;
@@ -410,7 +446,7 @@ void init_TIM2(void){
     NVIC_TimerConfig.NVIC_IRQChannel = TIM2_IRQn;
     NVIC_TimerConfig.NVIC_IRQChannelCmd = ENABLE;
     // TODO: Check priorities
-    NVIC_TimerConfig.NVIC_IRQChannelPreemptionPriority = 0x03;
+    NVIC_TimerConfig.NVIC_IRQChannelPreemptionPriority = 0x08;
     NVIC_TimerConfig.NVIC_IRQChannelSubPriority = 0x01;
     NVIC_Init(&NVIC_TimerConfig);
 
@@ -444,13 +480,17 @@ void TIM2_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM2, TIM_IT_Update) != 0) {
 
 		counter_led++;
-		if(counter_led >= 2000){
+		if(counter_led >= 200){
 			counter_led = 0;
 			STM_EVAL_LEDToggle(LED3);
 		}
 
 		// Update the output signal
 		_calculate_final_signal();
+
+
+		//ms_since_edge_rising++;
+		bouncing_counter_ms++;
 
 		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
 	}
@@ -461,43 +501,9 @@ int todoododo = 0;
 // Executes the TIM3 RSI
 void TIM3_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM3, TIM_IT_Update) != 0) {
-		num_overflows_right++;
-
-		//TIM_SetCounter(TIM3, 0);
+		micros_period_right+=2;
+		micros_period_left+=2;
 		TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
-	}
-}
-
-// Executes the TIM9 RSI
-/*void TIM1_BRK_TIM9_IRQHandler(void) {
-	if (TIM_GetITStatus(TIM9, TIM_IT_Update) != 0) {
-		num_overflows_right++;
-
-		todoododo++;
-		if (todoododo >= 15){
-			todoododo = 0;
-			STM_EVAL_LEDToggle(LED4);
-		}
-
-
-		//TIM_SetCounter(TIM3, 0);
-		TIM_ClearITPendingBit(TIM9, TIM_IT_Update);
-	}
-}*/
-
-// Executes the TIM4 RSI
-void TIM4_IRQHandler(void) {
-	if (TIM_GetITStatus(TIM4, TIM_IT_Update) != 0) {
-
-		todoododo++;
-		if (todoododo >= 15){
-			todoododo = 0;
-			STM_EVAL_LEDToggle(LED4);
-		}
-
-		num_overflows_left++;
-		//TIM_SetCounter(TIM4, 0);
-		TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
 	}
 }
 
@@ -514,7 +520,7 @@ void EXTI9_5_IRQHandler(void) {
         EXTI_ClearITPendingBit(EXTI_Line9);
     }
     if (EXTI_GetITStatus(EXTI_Line8) != 0) {
-    	We = _calculate_rotation_speed(micros_period_right);
+    	We = _calculate_rotation_speed(micros_period_left);
     	micros_period_left = 0;
 
     	//GPIO_ToggleBits(GPIOE, GPIO_Pin_4);
@@ -525,16 +531,14 @@ void EXTI9_5_IRQHandler(void) {
 
 int main(void)
 {
-	init_TIM2();
-	init_TIM3_TIM4();
-	init_TIM5();
+	init_TIM2(); // 1ms
+	init_TIM3(); // 2us
+	init_TIM5(); // 50us
 	init_wheels_inputs();
 	init_wheel_signal_ouput();
 	init_PB_user();
 	init_DAC();
 	STM_EVAL_LEDInit(LED3);
-	STM_EVAL_LEDInit(LED4);
-
 
 	/* Infinite loop */
 	while (1){
