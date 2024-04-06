@@ -330,7 +330,7 @@ void init_wheels_inputs(void){
 
 }
 
-// Inits TIM3 and TIM4 for free-running counters that interrupts every 65535us
+//Interrupt every 1us
 void init_TIM3_TIM4(void){
 	TIM_TimeBaseInitTypeDef TIM_TimerConfig;
 	NVIC_InitTypeDef NVIC_TimerConfig;
@@ -338,9 +338,13 @@ void init_TIM3_TIM4(void){
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
 
 	//TIM_TimeBaseStructInit(&TIM_TimerConfig);	//TODO: Check if yes or no
-	TIM_TimerConfig.TIM_Prescaler = 94;	// Now we get 1 Tic every 1us
+	// Inits TIM3 and TIM4 for free-running counters that interrupts every 65535us
+	/*TIM_TimerConfig.TIM_Prescaler = 94;	// Now we get 1 Tic every 1us
 	TIM_TimerConfig.TIM_CounterMode = TIM_CounterMode_Up;
-	TIM_TimerConfig.TIM_Period = 0xFFFFFFFF;
+	TIM_TimerConfig.TIM_Period = 0xFFFFFFFF;*/
+	TIM_TimerConfig.TIM_Prescaler = 41;
+	TIM_TimerConfig.TIM_CounterMode = TIM_CounterMode_Up;
+	TIM_TimerConfig.TIM_Period = 106;
 	TIM_TimerConfig.TIM_ClockDivision = TIM_CKD_DIV1;
     TIM_TimeBaseInit(TIM3, &TIM_TimerConfig);
     TIM_TimeBaseInit(TIM4, &TIM_TimerConfig);
