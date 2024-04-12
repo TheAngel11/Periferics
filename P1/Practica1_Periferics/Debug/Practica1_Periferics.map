@@ -33,7 +33,7 @@ sEEDataNum          0x1               Utilities\STM32F429I-Discovery\stm32f429i_
 LCD_CacheBuffer_xptr
                     0x2               Utilities\Common\lcd_log.o
 left_wheel_signal_period_us
-                    0x4               src\main.o
+                    0x4               src\globals.o
 LCD_CacheBuffer_yptr_invert
                     0x1               Utilities\Common\lcd_log.o
 LCD_Lock            0x1               Utilities\Common\lcd_log.o
@@ -48,7 +48,7 @@ LCD_LineColor       0x2               Utilities\Common\lcd_log.o
 NVIC_InitStructure  0x4               Utilities\STM32F429I-Discovery\stm32f429i_discovery.o
 LCD_ScrollBackStep  0x2               Utilities\Common\lcd_log.o
 right_wheel_signal_period_us
-                    0x4               src\main.o
+                    0x4               src\globals.o
 
 Discarded input sections
 
@@ -2160,10 +2160,71 @@ Discarded input sections
  .debug_frame   0x00000000       0xec Utilities\STM32F429I-Discovery\stm32f429i_discovery_sdram.o
  .ARM.attributes
                 0x00000000       0x39 Utilities\STM32F429I-Discovery\stm32f429i_discovery_sdram.o
+ .text          0x00000000        0x0 src\dac.o
+ .data          0x00000000        0x0 src\dac.o
+ .bss           0x00000000        0x0 src\dac.o
+ .debug_line    0x00000000        0x0 src\dac.o
+ .debug_str     0x00000000      0x12e src\dac.o
+ .comment       0x00000000       0x7d src\dac.o
+ .ARM.attributes
+                0x00000000       0x39 src\dac.o
+ .text          0x00000000        0x0 src\globals.o
+ .data          0x00000000        0x0 src\globals.o
+ .bss           0x00000000        0x0 src\globals.o
+ .bss.ms_since_edge_rising
+                0x00000000        0x4 src\globals.o
+ .text          0x00000000        0x0 src\gpio.o
+ .data          0x00000000        0x0 src\gpio.o
+ .bss           0x00000000        0x0 src\gpio.o
+ .debug_line    0x00000000        0x0 src\gpio.o
+ .debug_str     0x00000000      0x12f src\gpio.o
+ .comment       0x00000000       0x7d src\gpio.o
+ .ARM.attributes
+                0x00000000       0x39 src\gpio.o
+ .text          0x00000000        0x0 src\interrupts.o
+ .data          0x00000000        0x0 src\interrupts.o
+ .bss           0x00000000        0x0 src\interrupts.o
+ .debug_line    0x00000000        0x0 src\interrupts.o
+ .debug_str     0x00000000      0x135 src\interrupts.o
+ .comment       0x00000000       0x7d src\interrupts.o
+ .ARM.attributes
+                0x00000000       0x39 src\interrupts.o
  .text          0x00000000        0x0 src\main.o
  .data          0x00000000        0x0 src\main.o
  .bss           0x00000000        0x0 src\main.o
+ .bss.counter_led
+                0x00000000        0x4 src\main.o
+ .bss.Wd        0x00000000        0x4 src\main.o
+ .bss.We        0x00000000        0x4 src\main.o
+ .bss.micros_period_right
+                0x00000000        0x4 src\main.o
+ .bss.micros_period_left
+                0x00000000        0x4 src\main.o
+ .data.vehicle_speed
+                0x00000000        0x4 src\main.o
+ .data.vehicle_speed_ascendent
+                0x00000000        0x4 src\main.o
+ .bss.i         0x00000000        0x4 src\main.o
+ .data.difference_factor_ascendent
+                0x00000000        0x4 src\main.o
+ .bss.num_cycles
+                0x00000000        0x4 src\main.o
+ .bss.calculating_right_speed
+                0x00000000        0x4 src\main.o
+ .bss.right_wheel_speed
+                0x00000000        0x4 src\main.o
+ .bss.left_wheel_speed
+                0x00000000        0x4 src\main.o
+ .bss.j         0x00000000        0x4 src\main.o
+ .bss.signal1_microseconds
+                0x00000000        0x4 src\main.o
+ .bss.signal2_microseconds
+                0x00000000        0x4 src\main.o
  .bss.ms_since_edge_rising
+                0x00000000        0x4 src\main.o
+ .bss.bouncing_counter_ms
+                0x00000000        0x4 src\main.o
+ .bss.last_bouncing_counter_ms
                 0x00000000        0x4 src\main.o
  .bss.todoododo
                 0x00000000        0x4 src\main.o
@@ -2182,6 +2243,14 @@ Discarded input sections
                 0x00000000       0x10 src\system_stm32f4xx.o
  .text.SystemCoreClockUpdate
                 0x00000000       0xf8 src\system_stm32f4xx.o
+ .text          0x00000000        0x0 src\timers.o
+ .data          0x00000000        0x0 src\timers.o
+ .bss           0x00000000        0x0 src\timers.o
+ .debug_line    0x00000000        0x0 src\timers.o
+ .debug_str     0x00000000      0x131 src\timers.o
+ .comment       0x00000000       0x7d src\timers.o
+ .ARM.attributes
+                0x00000000       0x39 src\timers.o
  .text          0x00000000        0x0 src\tiny_printf.o
  .data          0x00000000        0x0 src\tiny_printf.o
  .bss           0x00000000        0x0 src\tiny_printf.o
@@ -2303,10 +2372,15 @@ LOAD Utilities\STM32F429I-Discovery\stm32f429i_discovery_ioe.o
 LOAD Utilities\STM32F429I-Discovery\stm32f429i_discovery_l3gd20.o
 LOAD Utilities\STM32F429I-Discovery\stm32f429i_discovery_lcd.o
 LOAD Utilities\STM32F429I-Discovery\stm32f429i_discovery_sdram.o
+LOAD src\dac.o
+LOAD src\globals.o
+LOAD src\gpio.o
+LOAD src\interrupts.o
 LOAD src\main.o
 LOAD src\startup_stm32f429x.o
 LOAD src\stm32f4xx_it.o
 LOAD src\system_stm32f4xx.o
+LOAD src\timers.o
 LOAD src\tiny_printf.o
                 0x00000080                malloc_getpagesize_P = 0x80
 START GROUP
@@ -2723,13 +2797,13 @@ LOAD c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../l
                 0x20000008        0x4 Utilities\STM32F429I-Discovery\stm32f429i_discovery_i2c_ee.o
                 0x20000008                sEETimeout
  .data.vehicle_speed
-                0x2000000c        0x4 src\main.o
+                0x2000000c        0x4 src\globals.o
                 0x2000000c                vehicle_speed
  .data.vehicle_speed_ascendent
-                0x20000010        0x4 src\main.o
+                0x20000010        0x4 src\globals.o
                 0x20000010                vehicle_speed_ascendent
  .data.difference_factor_ascendent
-                0x20000014        0x4 src\main.o
+                0x20000014        0x4 src\globals.o
                 0x20000014                difference_factor_ascendent
                 0x20000018                . = ALIGN (0x4)
                 0x20000018                _edata = .
@@ -2754,45 +2828,45 @@ LOAD c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../l
  .bss           0x20000018       0x1c c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/armv7e-m/fpu/crtbegin.o
  *(.bss*)
  .bss.counter_led
-                0x20000034        0x4 src\main.o
+                0x20000034        0x4 src\globals.o
                 0x20000034                counter_led
- .bss.Wd        0x20000038        0x4 src\main.o
+ .bss.Wd        0x20000038        0x4 src\globals.o
                 0x20000038                Wd
- .bss.We        0x2000003c        0x4 src\main.o
+ .bss.We        0x2000003c        0x4 src\globals.o
                 0x2000003c                We
  .bss.micros_period_right
-                0x20000040        0x4 src\main.o
+                0x20000040        0x4 src\globals.o
                 0x20000040                micros_period_right
  .bss.micros_period_left
-                0x20000044        0x4 src\main.o
+                0x20000044        0x4 src\globals.o
                 0x20000044                micros_period_left
- .bss.i         0x20000048        0x4 src\main.o
+ .bss.i         0x20000048        0x4 src\globals.o
                 0x20000048                i
  .bss.num_cycles
-                0x2000004c        0x4 src\main.o
+                0x2000004c        0x4 src\globals.o
                 0x2000004c                num_cycles
  .bss.calculating_right_speed
-                0x20000050        0x4 src\main.o
+                0x20000050        0x4 src\globals.o
                 0x20000050                calculating_right_speed
  .bss.right_wheel_speed
-                0x20000054        0x4 src\main.o
+                0x20000054        0x4 src\globals.o
                 0x20000054                right_wheel_speed
  .bss.left_wheel_speed
-                0x20000058        0x4 src\main.o
+                0x20000058        0x4 src\globals.o
                 0x20000058                left_wheel_speed
- .bss.j         0x2000005c        0x4 src\main.o
+ .bss.j         0x2000005c        0x4 src\globals.o
                 0x2000005c                j
  .bss.signal1_microseconds
-                0x20000060        0x4 src\main.o
+                0x20000060        0x4 src\globals.o
                 0x20000060                signal1_microseconds
  .bss.signal2_microseconds
-                0x20000064        0x4 src\main.o
+                0x20000064        0x4 src\globals.o
                 0x20000064                signal2_microseconds
  .bss.bouncing_counter_ms
-                0x20000068        0x4 src\main.o
+                0x20000068        0x4 src\globals.o
                 0x20000068                bouncing_counter_ms
  .bss.last_bouncing_counter_ms
-                0x2000006c        0x4 src\main.o
+                0x2000006c        0x4 src\globals.o
                 0x2000006c                last_bouncing_counter_ms
  .bss.rebounds_counter
                 0x20000070        0x4 src\main.o
@@ -2802,7 +2876,7 @@ LOAD c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../l
                 0x20000074                sEEDataWritePointer
                 0x20000078                sEEDataNum
                 0x2000007c                sEEDataReadPointer
- COMMON         0x20000080        0x8 src\main.o
+ COMMON         0x20000080        0x8 src\globals.o
                 0x20000080                left_wheel_signal_period_us
                 0x20000084                right_wheel_signal_period_us
                 0x20000088                . = ALIGN (0x4)
@@ -2860,26 +2934,28 @@ LOAD c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../l
  .ARM.attributes
                 0x00000290       0x39 Utilities\STM32F429I-Discovery\stm32f429i_discovery_i2c_ee.o
  .ARM.attributes
-                0x000002c9       0x39 src\main.o
+                0x000002c9       0x39 src\globals.o
  .ARM.attributes
-                0x00000302       0x21 src\startup_stm32f429x.o
+                0x00000302       0x39 src\main.o
  .ARM.attributes
-                0x00000323       0x39 src\stm32f4xx_it.o
+                0x0000033b       0x21 src\startup_stm32f429x.o
  .ARM.attributes
-                0x0000035c       0x39 src\system_stm32f4xx.o
+                0x0000035c       0x39 src\stm32f4xx_it.o
  .ARM.attributes
-                0x00000395       0x34 c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/../../../../arm-atollic-eabi/lib/armv7e-m/fpu\libc_nano.a(lib_a-init.o)
+                0x00000395       0x39 src\system_stm32f4xx.o
  .ARM.attributes
-                0x000003c9       0x22 c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/armv7e-m/fpu\libgcc.a(_arm_addsubdf3.o)
+                0x000003ce       0x34 c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/../../../../arm-atollic-eabi/lib/armv7e-m/fpu\libc_nano.a(lib_a-init.o)
  .ARM.attributes
-                0x000003eb       0x22 c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/armv7e-m/fpu\libgcc.a(_arm_muldivdf3.o)
+                0x00000402       0x22 c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/armv7e-m/fpu\libgcc.a(_arm_addsubdf3.o)
  .ARM.attributes
-                0x0000040d       0x22 c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/armv7e-m/fpu\libgcc.a(_arm_cmpdf2.o)
+                0x00000424       0x22 c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/armv7e-m/fpu\libgcc.a(_arm_muldivdf3.o)
  .ARM.attributes
-                0x0000042f       0x22 c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/armv7e-m/fpu/crtn.o
+                0x00000446       0x22 c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/armv7e-m/fpu\libgcc.a(_arm_cmpdf2.o)
+ .ARM.attributes
+                0x00000468       0x22 c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/armv7e-m/fpu/crtn.o
 OUTPUT(Practica1_Periferics.elf elf32-littlearm)
 
-.debug_info     0x00000000     0x7b3b
+.debug_info     0x00000000     0x7d54
  .debug_info    0x00000000      0x54d Libraries\STM32F4xx_StdPeriph_Driver\src\misc.o
  .debug_info    0x0000054d      0x654 Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_dac.o
  .debug_info    0x00000ba1      0x74c Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_dma.o
@@ -2891,12 +2967,13 @@ OUTPUT(Practica1_Periferics.elf elf32-littlearm)
  .debug_info    0x000038e7     0x1c74 Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_tim.o
  .debug_info    0x0000555b      0xbbb Utilities\STM32F429I-Discovery\stm32f429i_discovery.o
  .debug_info    0x00006116      0x50d Utilities\STM32F429I-Discovery\stm32f429i_discovery_i2c_ee.o
- .debug_info    0x00006623      0xd33 src\main.o
- .debug_info    0x00007356       0x9a src\startup_stm32f429x.o
- .debug_info    0x000073f0      0x154 src\stm32f4xx_it.o
- .debug_info    0x00007544      0x5f7 src\system_stm32f4xx.o
+ .debug_info    0x00006623      0x219 src\globals.o
+ .debug_info    0x0000683c      0xd33 src\main.o
+ .debug_info    0x0000756f       0x9a src\startup_stm32f429x.o
+ .debug_info    0x00007609      0x154 src\stm32f4xx_it.o
+ .debug_info    0x0000775d      0x5f7 src\system_stm32f4xx.o
 
-.debug_abbrev   0x00000000     0x15f0
+.debug_abbrev   0x00000000     0x166e
  .debug_abbrev  0x00000000      0x172 Libraries\STM32F4xx_StdPeriph_Driver\src\misc.o
  .debug_abbrev  0x00000172      0x191 Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_dac.o
  .debug_abbrev  0x00000303      0x168 Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_dma.o
@@ -2908,12 +2985,13 @@ OUTPUT(Practica1_Periferics.elf elf32-littlearm)
  .debug_abbrev  0x00000c85      0x19a Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_tim.o
  .debug_abbrev  0x00000e1f      0x1f5 Utilities\STM32F429I-Discovery\stm32f429i_discovery.o
  .debug_abbrev  0x00001014      0x1c7 Utilities\STM32F429I-Discovery\stm32f429i_discovery_i2c_ee.o
- .debug_abbrev  0x000011db      0x233 src\main.o
- .debug_abbrev  0x0000140e       0x12 src\startup_stm32f429x.o
- .debug_abbrev  0x00001420       0x78 src\stm32f4xx_it.o
- .debug_abbrev  0x00001498      0x158 src\system_stm32f4xx.o
+ .debug_abbrev  0x000011db       0x7e src\globals.o
+ .debug_abbrev  0x00001259      0x233 src\main.o
+ .debug_abbrev  0x0000148c       0x12 src\startup_stm32f429x.o
+ .debug_abbrev  0x0000149e       0x78 src\stm32f4xx_it.o
+ .debug_abbrev  0x00001516      0x158 src\system_stm32f4xx.o
 
-.debug_aranges  0x00000000      0xaa8
+.debug_aranges  0x00000000      0xac0
  .debug_aranges
                 0x00000000       0x40 Libraries\STM32F4xx_StdPeriph_Driver\src\misc.o
  .debug_aranges
@@ -2937,13 +3015,15 @@ OUTPUT(Practica1_Periferics.elf elf32-littlearm)
  .debug_aranges
                 0x00000900       0x58 Utilities\STM32F429I-Discovery\stm32f429i_discovery_i2c_ee.o
  .debug_aranges
-                0x00000958       0x98 src\main.o
+                0x00000958       0x18 src\globals.o
  .debug_aranges
-                0x000009f0       0x28 src\startup_stm32f429x.o
+                0x00000970       0x98 src\main.o
  .debug_aranges
-                0x00000a18       0x60 src\stm32f4xx_it.o
+                0x00000a08       0x28 src\startup_stm32f429x.o
  .debug_aranges
-                0x00000a78       0x30 src\system_stm32f4xx.o
+                0x00000a30       0x60 src\stm32f4xx_it.o
+ .debug_aranges
+                0x00000a90       0x30 src\system_stm32f4xx.o
 
 .debug_ranges   0x00000000      0x9c0
  .debug_ranges  0x00000000       0x30 Libraries\STM32F4xx_StdPeriph_Driver\src\misc.o
@@ -2962,7 +3042,7 @@ OUTPUT(Practica1_Periferics.elf elf32-littlearm)
  .debug_ranges  0x00000950       0x50 src\stm32f4xx_it.o
  .debug_ranges  0x000009a0       0x20 src\system_stm32f4xx.o
 
-.debug_line     0x00000000     0x3986
+.debug_line     0x00000000     0x3b04
  .debug_line    0x00000000      0x256 Libraries\STM32F4xx_StdPeriph_Driver\src\misc.o
  .debug_line    0x00000256      0x36a Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_dac.o
  .debug_line    0x000005c0      0x442 Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_dma.o
@@ -2974,12 +3054,13 @@ OUTPUT(Practica1_Periferics.elf elf32-littlearm)
  .debug_line    0x00001e0f      0xad9 Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_tim.o
  .debug_line    0x000028e8      0x34b Utilities\STM32F429I-Discovery\stm32f429i_discovery.o
  .debug_line    0x00002c33      0x431 Utilities\STM32F429I-Discovery\stm32f429i_discovery_i2c_ee.o
- .debug_line    0x00003064      0x460 src\main.o
- .debug_line    0x000034c4       0x7a src\startup_stm32f429x.o
- .debug_line    0x0000353e      0x22a src\stm32f4xx_it.o
- .debug_line    0x00003768      0x21e src\system_stm32f4xx.o
+ .debug_line    0x00003064      0x17e src\globals.o
+ .debug_line    0x000031e2      0x460 src\main.o
+ .debug_line    0x00003642       0x7a src\startup_stm32f429x.o
+ .debug_line    0x000036bc      0x22a src\stm32f4xx_it.o
+ .debug_line    0x000038e6      0x21e src\system_stm32f4xx.o
 
-.debug_str      0x00000000     0x35b8
+.debug_str      0x00000000     0x35c9
  .debug_str     0x00000000      0x429 Libraries\STM32F4xx_StdPeriph_Driver\src\misc.o
                                 0x476 (size before relaxing)
  .debug_str     0x00000429      0x2a8 Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_dac.o
@@ -3002,11 +3083,13 @@ OUTPUT(Practica1_Periferics.elf elf32-littlearm)
                                 0xe43 (size before relaxing)
  .debug_str     0x00002f26      0x183 Utilities\STM32F429I-Discovery\stm32f429i_discovery_i2c_ee.o
                                 0x4c9 (size before relaxing)
- .debug_str     0x000030a9      0x3da src\main.o
+ .debug_str     0x000030a9      0x163 src\globals.o
+                                0x368 (size before relaxing)
+ .debug_str     0x0000320c      0x288 src\main.o
                                 0xffc (size before relaxing)
- .debug_str     0x00003483       0xa6 src\stm32f4xx_it.o
+ .debug_str     0x00003494       0xa6 src\stm32f4xx_it.o
                                 0x297 (size before relaxing)
- .debug_str     0x00003529       0x8f src\system_stm32f4xx.o
+ .debug_str     0x0000353a       0x8f src\system_stm32f4xx.o
                                 0x43d (size before relaxing)
 
 .comment        0x00000000       0x7c
@@ -3022,6 +3105,7 @@ OUTPUT(Practica1_Periferics.elf elf32-littlearm)
  .comment       0x0000007c       0x7d Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_tim.o
  .comment       0x0000007c       0x7d Utilities\STM32F429I-Discovery\stm32f429i_discovery.o
  .comment       0x0000007c       0x7d Utilities\STM32F429I-Discovery\stm32f429i_discovery_i2c_ee.o
+ .comment       0x0000007c       0x7d src\globals.o
  .comment       0x0000007c       0x7d src\main.o
  .comment       0x0000007c       0x7d src\stm32f4xx_it.o
  .comment       0x0000007c       0x7d src\system_stm32f4xx.o
@@ -4208,7 +4292,9 @@ WWDG_SetCounter                                   Libraries\STM32F4xx_StdPeriph_
 WWDG_SetPrescaler                                 Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_wwdg.o
 WWDG_SetWindowValue                               Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_wwdg.o
 Wd                                                src\main.o
+                                                  src\globals.o
 We                                                src\main.o
+                                                  src\globals.o
 __adddf3                                          c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/armv7e-m/fpu\libgcc.a(_arm_addsubdf3.o)
 __aeabi_cdcmpeq                                   c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/armv7e-m/fpu\libgcc.a(_arm_cmpdf2.o)
 __aeabi_cdcmple                                   c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/armv7e-m/fpu\libgcc.a(_arm_cmpdf2.o)
@@ -4270,9 +4356,13 @@ _sidata                                           src\startup_stm32f429x.o
 _write                                            c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/../../../../arm-atollic-eabi/lib/armv7e-m/fpu\libnosys.a(write.o)
                                                   src\tiny_printf.o
 bouncing_counter_ms                               src\main.o
+                                                  src\globals.o
 calculating_right_speed                           src\main.o
+                                                  src\globals.o
 counter_led                                       src\main.o
+                                                  src\globals.o
 difference_factor_ascendent                       src\main.o
+                                                  src\globals.o
 errno                                             c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/../../../../arm-atollic-eabi/lib/armv7e-m/fpu\libnosys.a(errno.o)
                                                   c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/../../../../arm-atollic-eabi/lib/armv7e-m/fpu\libnosys.a(write.o)
 fiprintf                                          src\tiny_printf.o
@@ -4281,6 +4371,7 @@ fputs                                             src\tiny_printf.o
 fwrite                                            src\tiny_printf.o
 g_pfnVectors                                      src\startup_stm32f429x.o
 i                                                 src\main.o
+                                                  src\globals.o
 init_DAC                                          src\main.o
 init_PB_user                                      src\main.o
 init_TIM2                                         src\main.o
@@ -4290,20 +4381,30 @@ init_wheel_signal_ouput                           src\main.o
 init_wheels_inputs                                src\main.o
 iprintf                                           src\tiny_printf.o
 j                                                 src\main.o
+                                                  src\globals.o
 last_bouncing_counter_ms                          src\main.o
+                                                  src\globals.o
 left_wheel_signal_period_us                       src\main.o
+                                                  src\globals.o
 left_wheel_speed                                  src\main.o
+                                                  src\globals.o
 main                                              src\main.o
                                                   src\startup_stm32f429x.o
 micros_period_left                                src\main.o
+                                                  src\globals.o
 micros_period_right                               src\main.o
+                                                  src\globals.o
 ms_since_edge_rising                              src\main.o
+                                                  src\globals.o
 num_cycles                                        src\main.o
+                                                  src\globals.o
 printf                                            src\tiny_printf.o
 puts                                              src\tiny_printf.o
 rebounds_counter                                  src\main.o
 right_wheel_signal_period_us                      src\main.o
+                                                  src\globals.o
 right_wheel_speed                                 src\main.o
+                                                  src\globals.o
 sEEAddress                                        Utilities\STM32F429I-Discovery\stm32f429i_discovery_i2c_ee.o
 sEEDMA_InitStructure                              Utilities\STM32F429I-Discovery\stm32f429i_discovery.o
 sEEDataNum                                        Utilities\STM32F429I-Discovery\stm32f429i_discovery_i2c_ee.o
@@ -4325,7 +4426,9 @@ sEE_WaitEepromStandbyState                        Utilities\STM32F429I-Discovery
 sEE_WriteBuffer                                   Utilities\STM32F429I-Discovery\stm32f429i_discovery_i2c_ee.o
 sEE_WritePage                                     Utilities\STM32F429I-Discovery\stm32f429i_discovery_i2c_ee.o
 signal1_microseconds                              src\main.o
+                                                  src\globals.o
 signal2_microseconds                              src\main.o
+                                                  src\globals.o
 siprintf                                          src\tiny_printf.o
 sprintf                                           src\tiny_printf.o
 strlen                                            c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/../../../../arm-atollic-eabi/lib/armv7e-m/fpu\libc_nano.a(lib_a-strlen.o)
@@ -4335,4 +4438,6 @@ ts_formatlength                                   src\tiny_printf.o
 ts_formatstring                                   src\tiny_printf.o
 ts_itoa                                           src\tiny_printf.o
 vehicle_speed                                     src\main.o
+                                                  src\globals.o
 vehicle_speed_ascendent                           src\main.o
+                                                  src\globals.o
