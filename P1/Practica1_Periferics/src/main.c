@@ -129,7 +129,7 @@ void init_wheel_signal_ouput(void) {
 	GPIO_Init(GPIOE, &GPIO_config);*/
 }
 
-// Inits TIM5 for 1us interrupts
+// Inits TIM5 for 50us interrupts
 void init_TIM5(void){
 	//TODOTODOTODO: Find values that make the timer error zero (now is near zero, but not zero)
 
@@ -560,7 +560,6 @@ int main(void)
 	init_DAC();
 	STM_EVAL_LEDInit(LED3);
 	STM_EVAL_LEDInit(LED4);
-	DAC_SetChannel2Data(DAC_Align_12b_R, 0);
 
 	/* Infinite loop */
 	while (1){
