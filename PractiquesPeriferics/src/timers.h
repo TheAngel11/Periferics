@@ -8,8 +8,7 @@
 #ifndef TIMERS_H_
 #define TIMERS_H_
 
-#include "stm32f4xx.h"
-#include "stm32f429i_discovery.h"
+#include "globals.h"
 
 
 void init_TIM2(void); // 1ms
