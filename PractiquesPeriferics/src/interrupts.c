@@ -39,15 +39,24 @@ void EXTI0_IRQHandler(void) {
 					i--;
 				}
 				/////////////////////////
+				if (difference_factor_ascendent == 1) {
 
-				if (calculating_right_speed) {
-					left_wheel_speed = vehicle_speed;
-					right_wheel_speed = wheel_speed_difference_factor[j] * left_wheel_speed;
+					if (calculating_right_speed) {
+						left_wheel_speed = vehicle_speed;
+						right_wheel_speed = wheel_speed_difference_factor[j-1] * left_wheel_speed;
+					} else {
+						right_wheel_speed = vehicle_speed;
+						left_wheel_speed = wheel_speed_difference_factor[j-1] * right_wheel_speed;
+					}
 				} else {
-					right_wheel_speed = vehicle_speed;
-					left_wheel_speed = wheel_speed_difference_factor[j] * right_wheel_speed;
+					if (calculating_right_speed) {
+						left_wheel_speed = vehicle_speed;
+						right_wheel_speed = wheel_speed_difference_factor[j+1] * left_wheel_speed;
+					} else {
+						right_wheel_speed = vehicle_speed;
+						left_wheel_speed = wheel_speed_difference_factor[j+1] * right_wheel_speed;
+					}
 				}
-
 			} else {
 
 					//CASE GPIO AUX C15 HIGH
