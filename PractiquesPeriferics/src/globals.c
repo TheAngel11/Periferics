@@ -7,6 +7,7 @@
 
 #include "globals.h"
 
+// P1
 int counter_led = 0;
 unsigned int Wd = 0;
 unsigned int We = 0;
@@ -28,3 +29,9 @@ int left_wheel_signal_period_us;
 int ms_since_edge_rising = 0;
 int bouncing_counter_ms = 0;
 int last_bouncing_counter_ms = 0;
+
+// P2
+uint16_t ORIGIN_BUFFER[16];
+uint16_t DESTINATION_BUFFER[16];
+int sample_counter = 0;
+int flag_make_samples = 1;

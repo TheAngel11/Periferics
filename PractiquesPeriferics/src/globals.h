@@ -13,6 +13,7 @@
 
 #define MAX_BOUNCES_MS 300
 
+//P1
 extern int counter_led;
 extern unsigned int Wd;
 extern unsigned int We;
@@ -34,5 +35,11 @@ extern int left_wheel_signal_period_us;
 extern int ms_since_edge_rising;
 extern int bouncing_counter_ms;
 extern int last_bouncing_counter_ms;
+
+//P2
+extern uint16_t ORIGIN_BUFFER[16];
+extern uint16_t DESTINATION_BUFFER[16];
+extern int sample_counter;
+extern int flag_make_samples;
 
 #endif /* GLOBALS_H_ */

@@ -7,6 +7,28 @@
 
 #include "timers.h"
 
+void transfer_ADC_to_DMA(void){
+
+    ADC_SoftwareStartConv(ADC3);
+    if (sample_counter >= 7) {
+    	//STM_EVAL_LEDOff(LED4);
+
+    	DMA_Cmd(DMA2_Stream0, DISABLE);
+
+		DMA_SetCurrDataCounter(DMA2_Stream0, 16);
+
+		DMA_Cmd(DMA2_Stream0, ENABLE);
+
+    	sample_counter = 0;
+    	flag_make_samples = 0;
+
+    } else {
+
+      sample_counter++;
+
+    }
+}
+
 // Function that calculates the Vc signal from We and Wd
 void _calculate_final_signal(void){
 	unsigned int minW;
@@ -60,6 +82,8 @@ void TIM2_IRQHandler(void) {
 		//STM_EVAL_LEDToggle(LED4);
 		counter_led++;
 		bouncing_counter_ms++;
+		flag_make_samples = 1;
+		//STM_EVAL_LEDOn(LED4);
 
 		if(counter_led >= 200){
 			counter_led = 0;
@@ -102,6 +126,11 @@ void TIM5_IRQHandler(void) {
 		if (signal2_microseconds >= (left_wheel_signal_period_us / 2)) {
 			GPIO_ToggleBits(GPIOG, GPIO_Pin_1);
 			signal2_microseconds = 0;
+		}
+
+		// Transfer E/S -> DMA
+		if(flag_make_samples == 1){
+			transfer_ADC_to_DMA();
 		}
 
 		//STM_EVAL_LEDOff(LED4);

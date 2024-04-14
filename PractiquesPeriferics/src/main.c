@@ -3,6 +3,8 @@
 #include "interrupts.h"
 #include "gpios.h"
 #include "dac.h"
+#include "adc.h"
+#include "dma.h"
 
 int main(void)
 {
@@ -13,12 +15,16 @@ int main(void)
 	init_wheel_signal_ouput();
 	init_PB_user();
 	init_DAC();
+	init_ADC_2_mem();
+	init_mem_2_mem();
+	init_ADC();
 
 	STM_EVAL_LEDInit(LED3);
 	STM_EVAL_LEDInit(LED4);
 
 	/* Infinite loop */
 	while (1){
+
 	}
 }
 
