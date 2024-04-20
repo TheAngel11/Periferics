@@ -7,12 +7,15 @@
 
 #include "dma.h"
 
+//TODO: DEBUG
+float counter_test_signal = -4;
+
 // DMA interrupt handler to calculate acceleration
 void DMA2_Stream0_IRQHandler(void) {
 	if (DMA_GetITStatus(DMA2_Stream0, DMA_IT_TCIF0) != 0) {
 		int average_samples_X = 0;
 		int average_samples_Y = 0;
-
+		
 		//STM_EVAL_LEDToggle(LED4);
 
 		for(int i = 0; i < 16; i=i+2){
@@ -30,6 +33,25 @@ void DMA2_Stream0_IRQHandler(void) {
 		// VALUES OF ACCELERATION!!!
 		float acceleration_X = ((float)average_samples_X - 1365.0) / 341.25;
 		float acceleration_Y = ((float)average_samples_Y - 1365.0) / 341.25;
+
+		//acceleration_X_samples[paint_signal_counter] = acceleration_X;
+		//acceleration_Y_samples[paint_signal_counter] = acceleration_Y;
+
+		// TODO: Testing
+		acceleration_X_samples[paint_signal_counter] = counter_test_signal;
+		acceleration_Y_samples[paint_signal_counter] = counter_test_signal;
+
+		counter_test_signal += 0.001;
+		if(counter_test_signal >= 4.0){
+			counter_test_signal = -4.0;
+		}
+
+		paint_signal_counter++;
+
+		if(paint_signal_counter >= 10){
+			paint_signal_counter = 0;
+			flag_paint_signal = 1;
+		}
 
 		DMA_ClearITPendingBit(DMA2_Stream0, DMA_IT_TCIF0);
 	}

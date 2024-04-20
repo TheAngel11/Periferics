@@ -42,4 +42,13 @@ extern uint16_t DESTINATION_BUFFER[16];
 extern int sample_counter;
 extern int flag_make_samples;
 
+//P3
+extern int LAYER_NUM;
+extern int flag_paint_signal;
+extern int paint_signal_counter;
+extern int pointer_to_paint;
+extern float acceleration_X_samples[10];
+extern float acceleration_Y_samples[10];
+
+
 #endif /* GLOBALS_H_ */
