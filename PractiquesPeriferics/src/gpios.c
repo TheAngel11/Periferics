@@ -60,29 +60,29 @@ void init_wheels_inputs(void){
 	EXTI_InitTypeDef EXTI_config;
 	NVIC_InitTypeDef NVIC_config;
 
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
 
-	GPIO_config.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9;
+	GPIO_config.GPIO_Pin = GPIO_Pin_12 | GPIO_Pin_11;
 	GPIO_config.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_config.GPIO_OType = GPIO_OType_PP;
 	GPIO_config.GPIO_Mode = GPIO_Mode_IN;
 	GPIO_config.GPIO_Speed = GPIO_Speed_100MHz;
-	GPIO_Init(GPIOD, &GPIO_config);
+	GPIO_Init(GPIOC, &GPIO_config);
 
-    SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOD, EXTI_PinSource9);
-    SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOD, EXTI_PinSource8);
+    SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOC, EXTI_PinSource12);
+    SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOC, EXTI_PinSource11);
 
-	EXTI_config.EXTI_Line = EXTI_Line9 ;
+	EXTI_config.EXTI_Line = EXTI_Line12;
 	EXTI_config.EXTI_Mode = EXTI_Mode_Interrupt;
 	EXTI_config.EXTI_Trigger = EXTI_Trigger_Rising;
 	EXTI_config.EXTI_LineCmd = ENABLE;
 	EXTI_Init(&EXTI_config);
-	EXTI_config.EXTI_Line = EXTI_Line8;
+	EXTI_config.EXTI_Line = EXTI_Line11;
 	EXTI_Init(&EXTI_config);
 
-	NVIC_config.NVIC_IRQChannel = EXTI9_5_IRQn;
-	NVIC_config.NVIC_IRQChannelPreemptionPriority = 0x03;
+	NVIC_config.NVIC_IRQChannel = EXTI15_10_IRQn;
+	NVIC_config.NVIC_IRQChannelPreemptionPriority = 0x04;
 	NVIC_config.NVIC_IRQChannelSubPriority = 0x01;
 	NVIC_config.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_config);

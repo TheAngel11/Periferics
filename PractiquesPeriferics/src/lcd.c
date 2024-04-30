@@ -289,28 +289,32 @@ void init_LCD(void){
 
 void draw_layer1(void){
 	LAYER_NUM = 1;
-	DibuixaLiniaVertical(4, 35, 236, 0x0F, 0, 0, 0);
-	DibuixaLiniaVertical(86, 35, 236, 0x0F, 0, 0, 0);
-	DibuixaLiniaVertical(45, 35, 236, 0x0F, 0, 0, 0);
-	DibuixaLiniaHoritzontal(4, 86, 35, 0x0F, 0, 0, 0);
-	DibuixaLiniaHoritzontal(4, 86, 236, 0x0F, 0, 0, 0);
+	DibuixaLiniaVertical(4, 35, 236, 0xFF, 0, 0, 0);
+	DibuixaLiniaVertical(86, 35, 236, 0xFF, 0, 0, 0);
+	DibuixaLiniaVertical(45, 35, 236, 0xFF, 0, 0, 0);
+	DibuixaLiniaHoritzontal(4, 86, 35, 0xFF, 0, 0, 0);
+	DibuixaLiniaHoritzontal(4, 86, 236, 0xFF, 0, 0, 0);
 
-	DibuixaLiniaHoritzontal(101, 302, 236, 0x0F, 0, 0, 0);
-	DibuixaLiniaHoritzontal(101, 302, 154, 0x0F, 0, 0, 0);
-	DibuixaLiniaHoritzontal(101, 302, 195, 0x0F, 0, 0, 0);
-	DibuixaLiniaVertical(101, 154, 236, 0x0F, 0, 0, 0);
-	DibuixaLiniaVertical(302, 154, 236, 0x0F, 0, 0, 0);
+	DibuixaLiniaHoritzontal(101, 302, 236, 0xFF, 0, 0, 0);
+	DibuixaLiniaHoritzontal(101, 302, 154, 0xFF, 0, 0, 0);
+	DibuixaLiniaHoritzontal(101, 302, 195, 0xFF, 0, 0, 0);
+	DibuixaLiniaVertical(101, 154, 236, 0xFF, 0, 0, 0);
+	DibuixaLiniaVertical(302, 154, 236, 0xFF, 0, 0, 0);
 
-	DibuixaLiniaVertical(200, 8, 144, 0x0F, 0, 0, 0);
-	DibuixaLiniaHoritzontal(132, 268, 76, 0x0F, 0, 0, 0);
-	DibuixaCircumferencia(200, 76, 15, 0x0F, 0, 0, 0);
-	DibuixaCircumferencia(200, 76, 30, 0x0F, 0, 0, 0);
-	DibuixaCircumferencia(200, 76, 45, 0x0F, 0, 0, 0);
-	DibuixaCircumferencia(200, 76, 60, 0x0F, 0, 0, 0);
+	DibuixaLiniaVertical(200, 8, 144, 0xFF, 0, 0, 0);
+	DibuixaLiniaHoritzontal(132, 268, 76, 0xFF, 0, 0, 0);
+	DibuixaCircumferencia(200, 76, 15, 0xFF, 0, 0, 0);
+	DibuixaCircumferencia(200, 76, 30, 0xFF, 0, 0, 0);
+	DibuixaCircumferencia(200, 76, 45, 0xFF, 0, 0, 0);
+	DibuixaCircumferencia(200, 76, 60, 0xFF, 0, 0, 0);
+}
+
+void draw_layer0(void){
 
 }
 
-void draw_layer2(void){
+
+/*void draw_layer2(void){
 	float avg_acceleration_X = 0;
 	float avg_acceleration_Y = 0;
 	int col;
@@ -385,4 +389,4 @@ void draw_layer2(void){
 		pointer_to_paint = 0;
 		//EsborraPantalla(0xFF, 0xFF, 0xFF);
 	}
-}
+}*/

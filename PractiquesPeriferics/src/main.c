@@ -81,9 +81,9 @@ int main(void)
 
 			// Delete the previous pixel painted
 			SetPixel(buffer_signal_Y_coords[pointer_to_paint].col, buffer_signal_Y_coords[pointer_to_paint].fila, 0x00, 0xFF, 0xFF, 0xFF);
-			SetPixel(buffer_signal_Y_coords[pointer_to_paint].col, buffer_signal_Y_coords[pointer_to_paint].fila, 0x00, 0xFF, 0xFF, 0xFF);
-			SetPixel(buffer_signal_Y_coords[pointer_to_paint].col, buffer_signal_Y_coords[pointer_to_paint].fila, 0x00, 0xFF, 0xFF, 0xFF);
-			SetPixel(buffer_signal_Y_coords[pointer_to_paint].col, buffer_signal_Y_coords[pointer_to_paint].fila, 0x00, 0xFF, 0xFF, 0xFF);
+			//SetPixel(buffer_signal_Y_coords[pointer_to_paint].col, buffer_signal_Y_coords[pointer_to_paint].fila, 0x00, 0xFF, 0xFF, 0xFF);
+			//SetPixel(buffer_signal_Y_coords[pointer_to_paint].col, buffer_signal_Y_coords[pointer_to_paint].fila, 0x00, 0xFF, 0xFF, 0xFF);
+			//SetPixel(buffer_signal_Y_coords[pointer_to_paint].col, buffer_signal_Y_coords[pointer_to_paint].fila, 0x00, 0xFF, 0xFF, 0xFF);
 
 			//SetPixel(col, fila, 0x0F, 0xFF, 0, 0);
 			SetPixel(col, fila, 0xFF, 0xFF, 0, 0);
@@ -104,9 +104,9 @@ int main(void)
 			fila = 236 - (int)((avg_acceleration_X + 4) * 10.25);
 			// Delete the previous pixel painted
 			SetPixel(buffer_signal_X_coords[pointer_to_paint].col, buffer_signal_X_coords[pointer_to_paint].fila, 0x00, 0xFF, 0xFF, 0xFF);
-			SetPixel(buffer_signal_X_coords[pointer_to_paint].col, buffer_signal_X_coords[pointer_to_paint].fila, 0x00, 0xFF, 0xFF, 0xFF);
-			SetPixel(buffer_signal_X_coords[pointer_to_paint].col, buffer_signal_X_coords[pointer_to_paint].fila, 0x00, 0xFF, 0xFF, 0xFF);
-			SetPixel(buffer_signal_X_coords[pointer_to_paint].col, buffer_signal_X_coords[pointer_to_paint].fila, 0x00, 0xFF, 0xFF, 0xFF);
+			//SetPixel(buffer_signal_X_coords[pointer_to_paint].col, buffer_signal_X_coords[pointer_to_paint].fila, 0x00, 0xFF, 0xFF, 0xFF);
+			//SetPixel(buffer_signal_X_coords[pointer_to_paint].col, buffer_signal_X_coords[pointer_to_paint].fila, 0x00, 0xFF, 0xFF, 0xFF);
+			//SetPixel(buffer_signal_X_coords[pointer_to_paint].col, buffer_signal_X_coords[pointer_to_paint].fila, 0x00, 0xFF, 0xFF, 0xFF);
 
 			//SetPixel(col, fila, 0x0F, 0, 0, 0xFF);
 			SetPixel(col, fila, 0xFF, 0, 0, 0xFF);

@@ -104,6 +104,7 @@ void TIM3_IRQHandler(void) {
 		//STM_EVAL_LEDOn(LED4);
 		micros_period_right+=2;
 		micros_period_left+=2;
+
 		TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 		//STM_EVAL_LEDOff(LED4);
 	}

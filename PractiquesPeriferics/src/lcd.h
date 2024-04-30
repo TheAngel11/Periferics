@@ -51,6 +51,6 @@ RetSt DibuixaBitmap (uint16_t col, uint16_t fila, uint8_t alfa, uint8_t Rval, ui
 RetSt EsborraPantalla (uint8_t Rval, uint8_t Gval, uint8_t Bval);
 void init_LCD(void);
 void draw_layer1(void);
-void draw_layer2(void);
+void draw_layer0(void);
 
 #endif /* LCD_H_ */

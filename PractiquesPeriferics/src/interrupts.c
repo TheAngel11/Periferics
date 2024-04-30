@@ -121,7 +121,25 @@ void EXTI0_IRQHandler(void) {
 }
 
 // Speed signals RSI
-void EXTI9_5_IRQHandler(void) {
+void EXTI15_10_IRQHandler(void) {
+    if (EXTI_GetITStatus(EXTI_Line12) != 0) {
+    	//STM_EVAL_LEDOn(LED4);
+    	Wd = _calculate_rotation_speed(micros_period_right);
+    	micros_period_right = 0;
+
+        EXTI_ClearITPendingBit(EXTI_Line12);
+    	//STM_EVAL_LEDOff(LED4);
+    }
+    if (EXTI_GetITStatus(EXTI_Line11) != 0) {
+    	//STM_EVAL_LEDOn(LED4);
+    	We = _calculate_rotation_speed(micros_period_left);
+    	micros_period_left = 0;
+        EXTI_ClearITPendingBit(EXTI_Line11);
+        //STM_EVAL_LEDOff(LED4);
+    }
+}
+
+/*void EXTI9_5_IRQHandler(void) {
     if (EXTI_GetITStatus(EXTI_Line9) != 0) {
     	//STM_EVAL_LEDOn(LED4);
     	Wd = _calculate_rotation_speed(micros_period_right);
@@ -137,5 +155,4 @@ void EXTI9_5_IRQHandler(void) {
         EXTI_ClearITPendingBit(EXTI_Line8);
         //STM_EVAL_LEDOff(LED4);
     }
-}
-
+}*/
