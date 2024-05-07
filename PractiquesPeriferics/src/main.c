@@ -160,14 +160,14 @@ int main(void)
 				pointer_to_paint = 0;
 				//EsborraPantalla(0xFF, 0xFF, 0xFF);
 				// make a for loop to delete all the pixels painted
-				/*for (int i = 0; i < 200; i++){
-					SetPixel(buffer_signal_X_coords[i].col, buffer_signal_X_coords[i].fila, 0x00, 0xFF, 0xFF, 0xFF);
-					SetPixel(buffer_signal_Y_coords[i].col, buffer_signal_Y_coords[i].fila, 0x00, 0xFF, 0xFF, 0xFF);
-				}*/
+				//for (int i = 0; i < 200; i++){
+				//	SetPixel(buffer_signal_X_coords[i].col, buffer_signal_X_coords[i].fila, 0x00, 0xFF, 0xFF, 0xFF);
+				//	SetPixel(buffer_signal_Y_coords[i].col, buffer_signal_Y_coords[i].fila, 0x00, 0xFF, 0xFF, 0xFF);
+				//}
 			}
 
 
-		} 
+		}
 
 	}
 }

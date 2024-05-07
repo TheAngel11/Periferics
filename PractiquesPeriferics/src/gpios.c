@@ -15,7 +15,7 @@ void init_wheel_signal_ouput(void) {
 	GPIO_config.GPIO_Mode = GPIO_Mode_OUT;
 	GPIO_config.GPIO_OType = GPIO_OType_PP;
 	GPIO_config.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	GPIO_config.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;
+	GPIO_config.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_3;
 	GPIO_config.GPIO_Speed = GPIO_Speed_100MHz;
 	GPIO_Init(GPIOG, &GPIO_config);
 }

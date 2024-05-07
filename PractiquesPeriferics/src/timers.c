@@ -120,12 +120,13 @@ void TIM5_IRQHandler(void) {
 		TIM_ClearITPendingBit(TIM5, TIM_IT_Update);
 
 		if (signal1_microseconds >= (right_wheel_signal_period_us / 2)) {
-			GPIO_ToggleBits(GPIOG, GPIO_Pin_0);
+			GPIO_ToggleBits(GPIOG, GPIO_Pin_2);
 			signal1_microseconds = 0;
 		}
 
 		if (signal2_microseconds >= (left_wheel_signal_period_us / 2)) {
-			GPIO_ToggleBits(GPIOG, GPIO_Pin_1);
+			GPIO_ToggleBits(GPIOG, GPIO_Pin_3);
+
 			signal2_microseconds = 0;
 		}
 

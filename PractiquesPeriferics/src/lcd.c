@@ -46,7 +46,7 @@ RetSt  __attribute__((optimize("-O2"))) SetPixel (uint16_t col, uint16_t row, ui
 // Get the value ARGB of the pixel col x line
 uint32_t GetPixel(uint16_t col, uint16_t fila){
 	if (col > MAX_COL || fila > MAX_FILA || col < 0 || fila < 0){
-		return 0;
+		return NO_OK;
 	}
 
 	uint32_t pixel_adr = SDRAM_BANK_ADDR + LAYER_NUM * BUFFER_OFFSET + 4 * ((MAX_FILA + 1) * fila + col);
