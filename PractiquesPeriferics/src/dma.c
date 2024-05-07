@@ -34,12 +34,12 @@ void DMA2_Stream0_IRQHandler(void) {
 		float acceleration_X = ((float)average_samples_X - 1365.0) / 341.25;
 		float acceleration_Y = ((float)average_samples_Y - 1365.0) / 341.25;
 
-		//acceleration_X_samples[paint_signal_counter] = acceleration_X;
-		//acceleration_Y_samples[paint_signal_counter] = acceleration_Y;
+		acceleration_X_samples[paint_signal_counter] = acceleration_X;
+		acceleration_Y_samples[paint_signal_counter] = acceleration_Y;
 
 		// TODO: Testing
-		acceleration_X_samples[paint_signal_counter] = counter_test_signal;
-		acceleration_Y_samples[paint_signal_counter] = counter_test_signal;
+		//acceleration_X_samples[paint_signal_counter] = counter_test_signal;
+		//acceleration_Y_samples[paint_signal_counter] = counter_test_signal;
 
 		counter_test_signal += 0.001;
 		if(counter_test_signal >= 4.0){

@@ -16,7 +16,7 @@ void init_ADC(void) {
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC3, ENABLE);
 
 	GPIO_StructInit(&GPIO_config);
-	GPIO_config.GPIO_Pin = GPIO_Pin_1 | GPIO_Pin_0;
+	GPIO_config.GPIO_Pin = GPIO_Pin_1 | GPIO_Pin_3;
 	GPIO_config.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_config.GPIO_Mode = GPIO_Mode_AN;
 	GPIO_Init(GPIOC, &GPIO_config);
@@ -38,7 +38,7 @@ void init_ADC(void) {
 	ADC_common_config.ADC_TwoSamplingDelay = ADC_TwoSamplingDelay_5Cycles;
 	ADC_CommonInit(&ADC_common_config);
 
-	ADC_RegularChannelConfig(ADC3, ADC_Channel_10, 1, ADC_SampleTime_3Cycles);
+	ADC_RegularChannelConfig(ADC3, ADC_Channel_13, 1, ADC_SampleTime_3Cycles);
 	ADC_RegularChannelConfig(ADC3, ADC_Channel_11, 2, ADC_SampleTime_3Cycles);
 
 	ADC_DMARequestAfterLastTransferCmd(ADC3, ENABLE);

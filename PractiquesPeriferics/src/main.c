@@ -150,11 +150,6 @@ int main(void)
 			}
 
 			
-
-
-
-
-
 			pointer_to_paint++;
 			if(pointer_to_paint >= 200){
 				pointer_to_paint = 0;
