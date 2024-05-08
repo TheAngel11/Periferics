@@ -43,3 +43,4 @@ int paint_signal_counter = 0;
 int pointer_to_paint = 0;
 float acceleration_X_samples[10];
 float acceleration_Y_samples[10];
+int bitmap_counter = 0;

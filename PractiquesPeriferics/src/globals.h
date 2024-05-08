@@ -49,6 +49,6 @@ extern int paint_signal_counter;
 extern int pointer_to_paint;
 extern float acceleration_X_samples[10];
 extern float acceleration_Y_samples[10];
-
+extern int bitmap_counter;
 
 #endif /* GLOBALS_H_ */

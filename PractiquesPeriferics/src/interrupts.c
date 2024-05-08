@@ -138,21 +138,3 @@ void EXTI15_10_IRQHandler(void) {
         //STM_EVAL_LEDOff(LED4);
     }
 }
-
-/*void EXTI9_5_IRQHandler(void) {
-    if (EXTI_GetITStatus(EXTI_Line9) != 0) {
-    	//STM_EVAL_LEDOn(LED4);
-    	Wd = _calculate_rotation_speed(micros_period_right);
-    	micros_period_right = 0;
-
-        EXTI_ClearITPendingBit(EXTI_Line9);
-    	//STM_EVAL_LEDOff(LED4);
-    }
-    if (EXTI_GetITStatus(EXTI_Line8) != 0) {
-    	//STM_EVAL_LEDOn(LED4);
-    	We = _calculate_rotation_speed(micros_period_left);
-    	micros_period_left = 0;
-        EXTI_ClearITPendingBit(EXTI_Line8);
-        //STM_EVAL_LEDOff(LED4);
-    }
-}*/

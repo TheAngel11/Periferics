@@ -10,7 +10,7 @@
 /* ----- LCD LIBRARY -----*/
 
 // Draw a pixel in col x fila with value ARGB
-/*RetSt SetPixel(uint16_t col, uint16_t fila, uint8_t alfa, uint8_t Rval, uint8_t Gval, uint8_t Bval){
+RetSt SetPixel(uint16_t col, uint16_t fila, uint8_t alfa, uint8_t Rval, uint8_t Gval, uint8_t Bval){
 	if (col > MAX_COL || fila > MAX_FILA || col < 0 || fila < 0){
 		return NO_OK;
 	}
@@ -20,27 +20,6 @@
     *(uint32_t __IO*) pixel_adr = color;
 
     return OK;
-}*/
-#define PIXEL_DECODE(A, R, G, B) ((A << 24) | (R << 16) | (G << 8) | B)
-
-RetSt  __attribute__((optimize("-O2"))) SetPixel (uint16_t col, uint16_t row, uint8_t alpha, uint8_t Rval, uint8_t Gval, uint8_t Bval ) {
-	uint32_t color;
-
-	if (col < 0 || col > LCD_PIXEL_HEIGHT || row < 0 || row > LCD_PIXEL_WIDTH) {
-		return NO_OK;
-	}
-
-	col = 320 - col;
-
-	color = PIXEL_DECODE(alpha, Rval, Gval, Bval);
-
-	if (LAYER_NUM == 0){
-		*(__IO uint32_t *) (SDRAM_BANK_ADDR + LAYER_NUM * BUFFER_OFFSET + 4*(row + (LCD_PIXEL_WIDTH*col))) = color;
-	} else {
-		*(__IO uint32_t *) (SDRAM_BANK_ADDR + BUFFER_OFFSET + 4*(row + (LCD_PIXEL_WIDTH*col))) = color;
-	}
-
-	return OK;
 }
 
 // Get the value ARGB of the pixel col x line
@@ -140,11 +119,10 @@ RetSt EsborraPantalla(uint8_t Rval, uint8_t Gval, uint8_t Bval){
 	return OK;
 }
 
-
 /* ----- END LIBRARY  -----*/
 
 // Inits the LCD
-/*void init_LCD(void){
+void init_LCD(void){
 	LCD_Init();
 	RCC_PLLSAIConfig(256, 0, 2);
 
@@ -155,140 +133,10 @@ RetSt EsborraPantalla(uint8_t Rval, uint8_t Gval, uint8_t Bval){
 
 	LTDC_Cmd(ENABLE);
 	FMC_SDRAMWriteProtectionConfig(FMC_Bank2_SDRAM, DISABLE);
-}*/
-
-// Inits the LCD
-void init_LCD(void){
-	// init
-	LTDC_InitTypeDef       LTDC_InitStruct;
-	GPIO_InitTypeDef       GPIO_InitStructure;
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	GPIO_Init(GPIOD, &GPIO_InitStructure);
-	LCD_CtrlLinesConfig();
-	LCD_ChipSelect(DISABLE);
-	LCD_ChipSelect(ENABLE);
-	LCD_SPIConfig();
-	LCD_PowerOn();
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_LTDC, ENABLE);
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2D, ENABLE);
-
-	// PINS
-	GPIO_InitTypeDef GPIO_InitStruct;
-
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA | RCC_AHB1Periph_GPIOB | \
-						 RCC_AHB1Periph_GPIOC | RCC_AHB1Periph_GPIOD | \
-						 RCC_AHB1Periph_GPIOF | RCC_AHB1Periph_GPIOG, ENABLE);
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource3, GPIO_AF_LTDC);
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource4, GPIO_AF_LTDC);
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource6, GPIO_AF_LTDC);
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource11, GPIO_AF_LTDC);
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource12, GPIO_AF_LTDC);
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_6 | \
-							 GPIO_Pin_11 | GPIO_Pin_12;
-	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF;
-	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
-	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	GPIO_Init(GPIOA, &GPIO_InitStruct);
-	GPIO_PinAFConfig(GPIOB, GPIO_PinSource0, 0x09);
-	GPIO_PinAFConfig(GPIOB, GPIO_PinSource1, 0x09);
-	GPIO_PinAFConfig(GPIOB, GPIO_PinSource8, GPIO_AF_LTDC);
-	GPIO_PinAFConfig(GPIOB, GPIO_PinSource9, GPIO_AF_LTDC);
-	GPIO_PinAFConfig(GPIOB, GPIO_PinSource10, GPIO_AF_LTDC);
-	GPIO_PinAFConfig(GPIOB, GPIO_PinSource11, GPIO_AF_LTDC);
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_8 | \
-							 GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_11;
-	GPIO_Init(GPIOB, &GPIO_InitStruct);
-	GPIO_PinAFConfig(GPIOC, GPIO_PinSource6, GPIO_AF_LTDC);
-	GPIO_PinAFConfig(GPIOC, GPIO_PinSource7, GPIO_AF_LTDC);
-	GPIO_PinAFConfig(GPIOC, GPIO_PinSource10, GPIO_AF_LTDC);
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_10;
-	GPIO_Init(GPIOC, &GPIO_InitStruct);
-	GPIO_PinAFConfig(GPIOD, GPIO_PinSource3, GPIO_AF_LTDC);
-	GPIO_PinAFConfig(GPIOD, GPIO_PinSource6, GPIO_AF_LTDC);
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_6;
-	GPIO_Init(GPIOD, &GPIO_InitStruct);
-	GPIO_PinAFConfig(GPIOF, GPIO_PinSource10, GPIO_AF_LTDC);
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_10;
-	GPIO_Init(GPIOF, &GPIO_InitStruct);
-	GPIO_PinAFConfig(GPIOG, GPIO_PinSource6, GPIO_AF_LTDC);
-	GPIO_PinAFConfig(GPIOG, GPIO_PinSource7, GPIO_AF_LTDC);
-	GPIO_PinAFConfig(GPIOG, GPIO_PinSource10, 0x09);
-	GPIO_PinAFConfig(GPIOG, GPIO_PinSource11, GPIO_AF_LTDC);
-	GPIO_PinAFConfig(GPIOG, GPIO_PinSource12, 0x09);
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_10 | \
-							 GPIO_Pin_11 | GPIO_Pin_12;
-	GPIO_Init(GPIOG, &GPIO_InitStruct);
-	// FI PINS
-	SDRAM_Init();
-	LTDC_InitStruct.LTDC_HSPolarity = LTDC_HSPolarity_AL;
-	LTDC_InitStruct.LTDC_VSPolarity = LTDC_VSPolarity_AL;
-	LTDC_InitStruct.LTDC_DEPolarity = LTDC_DEPolarity_AL;
-	LTDC_InitStruct.LTDC_PCPolarity = LTDC_PCPolarity_IPC;
-	LTDC_InitStruct.LTDC_BackgroundRedValue = 0;
-	LTDC_InitStruct.LTDC_BackgroundGreenValue = 0;
-	LTDC_InitStruct.LTDC_BackgroundBlueValue = 0;
-	RCC_PLLSAIConfig(256, 0, 2); // MODIFICAT RESPECTE A LA FUNCI� ORIGINAL
-	RCC_LTDCCLKDivConfig(RCC_PLLSAIDivR_Div8);
-	RCC_PLLSAICmd(ENABLE);
-	while(RCC_GetFlagStatus(RCC_FLAG_PLLSAIRDY) == RESET)
-	{
-	}
-	LTDC_InitStruct.LTDC_HorizontalSync = 9;
-	LTDC_InitStruct.LTDC_VerticalSync = 1;
-	LTDC_InitStruct.LTDC_AccumulatedHBP = 29;
-	LTDC_InitStruct.LTDC_AccumulatedVBP = 3;
-	LTDC_InitStruct.LTDC_AccumulatedActiveW = 269;
-	LTDC_InitStruct.LTDC_AccumulatedActiveH = 323;
-	LTDC_InitStruct.LTDC_TotalWidth = 279;
-	LTDC_InitStruct.LTDC_TotalHeigh = 327;
-	LTDC_Init(&LTDC_InitStruct);
-
-	// LAYER
-	LTDC_Layer_InitTypeDef LTDC_Layer_InitStruct;
-
-	LTDC_Layer_InitStruct.LTDC_HorizontalStart = 30;
-	LTDC_Layer_InitStruct.LTDC_HorizontalStop = (LCD_PIXEL_WIDTH + 30 - 1);
-	LTDC_Layer_InitStruct.LTDC_VerticalStart = 4;
-	LTDC_Layer_InitStruct.LTDC_VerticalStop = (LCD_PIXEL_HEIGHT + 4 - 1);
-	LTDC_Layer_InitStruct.LTDC_PixelFormat = LTDC_Pixelformat_ARGB8888;
-	LTDC_Layer_InitStruct.LTDC_ConstantAlpha = 255;
-	LTDC_Layer_InitStruct.LTDC_DefaultColorBlue = 0;
-	LTDC_Layer_InitStruct.LTDC_DefaultColorGreen = 0;
-	LTDC_Layer_InitStruct.LTDC_DefaultColorRed = 0;
-	LTDC_Layer_InitStruct.LTDC_DefaultColorAlpha = 0;
-	LTDC_Layer_InitStruct.LTDC_BlendingFactor_1 = LTDC_BlendingFactor1_CA;
-	LTDC_Layer_InitStruct.LTDC_BlendingFactor_2 = LTDC_BlendingFactor2_CA;
-	LTDC_Layer_InitStruct.LTDC_CFBLineLength = ((LCD_PIXEL_WIDTH * 4) + 3);
-	LTDC_Layer_InitStruct.LTDC_CFBPitch = (LCD_PIXEL_WIDTH * 4);
-	LTDC_Layer_InitStruct.LTDC_CFBLineNumber = LCD_PIXEL_HEIGHT;
-	LTDC_Layer_InitStruct.LTDC_CFBStartAdress = LCD_FRAME_BUFFER;
-	LTDC_LayerInit(LTDC_Layer1, &LTDC_Layer_InitStruct);
-
-	LTDC_Layer_InitStruct.LTDC_CFBStartAdress = LCD_FRAME_BUFFER + BUFFER_OFFSET;
-	LTDC_Layer_InitStruct.LTDC_BlendingFactor_1 = LTDC_BlendingFactor1_PAxCA;
-	LTDC_Layer_InitStruct.LTDC_BlendingFactor_2 = LTDC_BlendingFactor2_PAxCA;
-	LTDC_LayerInit(LTDC_Layer2, &LTDC_Layer_InitStruct);
-
-	LTDC_ReloadConfig(LTDC_IMReload);
-	LTDC_LayerCmd(LTDC_Layer1, ENABLE);
-	LTDC_LayerCmd(LTDC_Layer2, ENABLE);
-	LTDC_ReloadConfig(LTDC_IMReload);
-	LTDC_DitherCmd(ENABLE);
-
-	LTDC_Cmd(ENABLE);
-
-	// de la 0xD000 0000 fins a la 0xDFFF FFFF
-	FMC_SDRAMWriteProtectionConfig(FMC_Bank2_SDRAM, DISABLE);
 }
 
 void draw_layer1(void){
-	LAYER_NUM = 1;
+	LAYER_NUM = 0;
 	DibuixaLiniaVertical(4, 35, 236, 0xFF, 0, 0, 0);
 	DibuixaLiniaVertical(86, 35, 236, 0xFF, 0, 0, 0);
 	DibuixaLiniaVertical(45, 35, 236, 0xFF, 0, 0, 0);
@@ -309,84 +157,68 @@ void draw_layer1(void){
 	DibuixaCircumferencia(200, 76, 60, 0xFF, 0, 0, 0);
 }
 
-void draw_layer0(void){
-
-}
-
-
-/*void draw_layer2(void){
+void draw_layer2(void){
 	float avg_acceleration_X = 0;
 	float avg_acceleration_Y = 0;
 	int col;
 	int fila;
 
+	flag_paint_signal = 0;
+	bitmap_counter++;
+
+	// Calculate the avg accelerations
 	for(int i = 0; i < 10; i++){
 		avg_acceleration_X += acceleration_X_samples[i];
 		avg_acceleration_Y += acceleration_Y_samples[i];
 	}
 
-	avg_acceleration_X = avg_acceleration_X / 10;
-	avg_acceleration_Y = avg_acceleration_Y / 10;
+	if (avg_acceleration_Y > 40) {
+		avg_acceleration_Y = 40;
+	}
 
-
-
-
-	//SetPixel(pointer_to_paint, pointer_to_paint, 0x0F, 0, 0, 0);
-	//SetPixel(pointer_to_paint, pointer_to_paint, 0x0F, 0, 0, 0);
-
-	// Pixen in Acceleration Y will be between column 4 and 86 depending on the value with a step of (8/82) and in row pointer_to_paint + 35
-	// Paint it red
-	// But first, delete the previous pixel painted deleting the horizontal line in the row pointer_to_paint + 35
-	// Paint it white
-	//DibuixaLiniaHoritzontal(4, 86, pointer_to_paint + 35, 0x00, 0xFF, 0xFF, 0xFF);
+	avg_acceleration_X = avg_acceleration_X / 10.0;
+	avg_acceleration_Y = avg_acceleration_Y / 10.0;
 
 	col = 4 + (int)((avg_acceleration_Y + 4) * 10.25);
 	fila = pointer_to_paint + 35;
+
+	// Signal Y
 	// Delete the previous pixel painted
 	SetPixel(buffer_signal_Y_coords[pointer_to_paint].col, buffer_signal_Y_coords[pointer_to_paint].fila, 0x00, 0xFF, 0xFF, 0xFF);
-	SetPixel(buffer_signal_Y_coords[pointer_to_paint].col, buffer_signal_Y_coords[pointer_to_paint].fila, 0x00, 0xFF, 0xFF, 0xFF);
-	SetPixel(buffer_signal_Y_coords[pointer_to_paint].col, buffer_signal_Y_coords[pointer_to_paint].fila, 0x00, 0xFF, 0xFF, 0xFF);
-
-	SetPixel(col, fila, 0x0F, 0xFF, 0, 0);
+	// Draw new pixel
 	SetPixel(col, fila, 0xFF, 0xFF, 0, 0);
-
-	buffer_signal_X_coords[pointer_to_paint].col = col;
-	buffer_signal_X_coords[pointer_to_paint].fila = fila;
-	//SetPixel(col, fila, 0xFF, 0xFF, 0, 0);
-
-	//SetPixel(col, fila, 0x0F, 0xFF, 0, 0);
-
-	//SetPixel(4 + (int)((avg_acceleration_Y + 4) * 10.25), pointer_to_paint + 35, 0x0F, 0xFF, 0, 0);
-
-	// Pixen in Acceleration X will be between row 154 and 236 depending on the value with a step of (8/82) and in column pointer_to_paint + 101
-	// Paint it blue
-	// But first, delete the previous pixel painted deleting the vertical line in the column pointer_to_paint + 101
-	//DibuixaLiniaVertical(pointer_to_paint + 101, 154, 236, 0x00, 0xFF, 0xFF, 0xFF);
-	col = pointer_to_paint + 101;
-	fila = 236 - (int)((avg_acceleration_X + 4) * 10.25);
-
-	// Delete the previous pixel painted
-	SetPixel(buffer_signal_X_coords[pointer_to_paint].col, buffer_signal_X_coords[pointer_to_paint].fila, 0x00, 0xFF, 0xFF, 0xFF);
-	SetPixel(buffer_signal_X_coords[pointer_to_paint].col, buffer_signal_X_coords[pointer_to_paint].fila, 0x00, 0xFF, 0xFF, 0xFF);
-	SetPixel(buffer_signal_X_coords[pointer_to_paint].col, buffer_signal_X_coords[pointer_to_paint].fila, 0x00, 0xFF, 0xFF, 0xFF);
-
-	SetPixel(col, fila, 0x0F, 0, 0, 0xFF);
-	SetPixel(col, fila, 0xFF, 0, 0, 0xFF);
 
 	buffer_signal_Y_coords[pointer_to_paint].col = col;
 	buffer_signal_Y_coords[pointer_to_paint].fila = fila;
-	//SetPixel(col, fila, 0xFF, 0, 0, 0xFF);
 
-	//SetPixel(col, fila, 0x0F, 0, 0, 0xFF);
+	col = pointer_to_paint + 101;
+	fila = 236 - (int)((avg_acceleration_X + 4) * 10.25);
 
-	//SetPixel(pointer_to_paint + 101, 236 - (int)((avg_acceleration_X + 4) * 10.25), 0x0F, 0, 0, 0xFF);
+	// Signal X
+	// Delete the previous pixel painted
+	SetPixel(buffer_signal_X_coords[pointer_to_paint].col, buffer_signal_X_coords[pointer_to_paint].fila, 0x00, 0xFF, 0xFF, 0xFF);
+	// Draw new pixel
+	SetPixel(col, fila, 0xFF, 0, 0, 0xFF);
 
+	buffer_signal_X_coords[pointer_to_paint].col = col;
+	buffer_signal_X_coords[pointer_to_paint].fila = fila;
 
+	// Bitmap
+	if (bitmap_counter >= 10) {
+		// Delete previous bitmap
+		DibuixaBitmap(bitmap_coords[0], bitmap_coords[1], 0x00, 0xFF, 0xFF, 0xFF);
 
+		bitmap_coords[0] = 140 + (int)((avg_acceleration_X + 4) * 15);
+		bitmap_coords[1] = 136 - (int)((avg_acceleration_Y + 4) * 15);
+
+		// Draw new bitmap
+		DibuixaBitmap(bitmap_coords[0], bitmap_coords[1], 0xFF, 0, 0xFF, 0);
+
+		bitmap_counter = 0;
+	}
 
 	pointer_to_paint++;
-	if(pointer_to_paint > 200){
+	if(pointer_to_paint >= 200){
 		pointer_to_paint = 0;
-		//EsborraPantalla(0xFF, 0xFF, 0xFF);
 	}
-}*/
+}

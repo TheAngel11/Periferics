@@ -126,7 +126,6 @@ void TIM5_IRQHandler(void) {
 
 		if (signal2_microseconds >= (left_wheel_signal_period_us / 2)) {
 			GPIO_ToggleBits(GPIOG, GPIO_Pin_3);
-
 			signal2_microseconds = 0;
 		}
 
